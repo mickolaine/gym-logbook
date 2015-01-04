@@ -102,13 +102,11 @@ function getExcercise(list, name, id) {
             var res = tx.executeSql("SELECT * FROM " + name + id + ";");
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
-                print(r.weight)
-                list.append({"id": r.id, "year": r.date, "month": r.month, "day": r.day, "sets": r.sets, "reps":r.reps,
+                //print(r.weight)
+                list.append({"id": r.id, "year": r.year, "month": r.month, "day": r.day, "sets": r.sets, "reps":r.reps,
                              "seconds":r.seconds, "weight":r.weight, "status":r.status});
             }
-
         }
-
     )
 }
 

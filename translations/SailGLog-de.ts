@@ -15,7 +15,7 @@
 <context>
     <name>Excercise</name>
     <message>
-        <source>New set</source>
+        <source>Date - sets x reps x weight</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

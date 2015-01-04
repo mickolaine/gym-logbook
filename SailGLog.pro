@@ -30,7 +30,8 @@ OTHER_FILES += qml/SailGLog.qml \
     qml/Database.js \
     qml/pages/ExcerciseList.qml \
     qml/pages/Excercise.qml \
-    qml/pages/NewSet.qml
+    qml/pages/NewSet.qml \
+    Readme.md
 
 # to disable building translations every time, comment out the
 # following CONFIG line
