@@ -10,6 +10,7 @@ Dialog {
 
     property string id
 
+
     DatePicker {
         id: datepicker
         visible: false
@@ -17,11 +18,12 @@ Dialog {
 
     function loadValues() {
 
-        if (typeof page.id == "string") {
+        if (isNaN(page.id)) {
+
+        }
+        else {
 
             var values = DB.getSet(page.table, page.id);
-
-            console.log(values[0])
 
             datepicker.date = new Date(values[0], values[1]-1, values[2], 0, 0, 0);
             sets.text = values[3];
@@ -32,12 +34,16 @@ Dialog {
     }
 
     onAccepted: {
-        if (typeof page.id == "string") {
-            DB.updateSet(page.id, page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, 0, status.value);
-        }
-        else {
+        if (isNaN(page.id)) {
             DB.newSet(page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, 0, status.value);
         }
+        else {
+            DB.updateSet(page.id, page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, 0, status.value);
+        }
+        pageStack.find( function(p) {
+            try { p.refresh(); } catch (e) {};
+            return false;
+        } );
     }
 
     onRejected: model.clear()
@@ -54,7 +60,7 @@ Dialog {
             spacing: Theme.paddingLarge
 
             PageHeader {
-                title: qsTr("New set")
+                title: qsTr("Accept set")
             }
 
             Component {

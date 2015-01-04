@@ -63,10 +63,6 @@
 <context>
     <name>NewSet</name>
     <message>
-        <source>New set</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Date</source>
         <translation type="unfinished"></translation>
     </message>
@@ -86,15 +82,15 @@
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Accept set</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Workouts</name>
     <message>
-        <source>Nested Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Item</source>
+        <source>Not implemented</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

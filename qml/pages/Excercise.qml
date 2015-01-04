@@ -94,7 +94,10 @@ Page {
             }
             MenuItem {
                 text: "New set"
-                onClicked: pageStack.push(Qt.resolvedUrl("NewSet.qml"), {table:page.tablename})
+                onClicked: {
+                    pageStack.push(Qt.resolvedUrl("NewSet.qml"), {table:page.tablename});
+                    page.refresh();
+                }
             }
         }
 
@@ -151,11 +154,14 @@ Page {
                         Component.onCompleted: parseContent()
                         truncationMode: TruncationMode.Fade
                     }
-                    onClicked: pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id})
+                    onClicked: {
+                        pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id});
+                        page.refresh();
+                    }
                 }
                 BackgroundItem {
                     id: bg2
-                    width: 170
+                    width: 125
                     anchors.left: bg1.right
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -180,7 +186,7 @@ Page {
                     ContextMenu {
                         MenuItem {
                             text: "Modify"
-                            onClicked: pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id})
+                            onClicked: {pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id}); page.refresh();}
                         }
                         MenuItem {
                             text: "Remove"

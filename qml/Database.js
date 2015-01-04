@@ -69,9 +69,6 @@ function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
 function updateSet(id, table, year, month, day, sets, reps, weight, seconds, status) {
     withDB(
         function(tx) {
-            console.log("UPDATE "+ table + " SET year=" + year + ", month=" + month + ", day=" + day +
-                        ", sets=" + sets + ", reps=" + reps + ", seconds=" + seconds + ", weight=" + weight +
-                        ", status='" + status + "' WHERE id=" + id +";")
             tx.executeSql("UPDATE "+ table + " SET year=" + year + ", month=" + month + ", day=" + day +
                           ", sets=" + sets + ", reps=" + reps + ", seconds=" + seconds + ", weight=" + weight +
                           ", status='" + status + "' WHERE id=" + id +";");
