@@ -50,7 +50,6 @@ function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
         function(tx) {
             try {
                 var result = tx.executeSql("SELECT max(id) FROM " + table + ";");
-                print(result.rows.item(0)["max(id)"]);
                 var maxId = result.rows.item(0)["max(id)"];
 
             }
@@ -61,6 +60,21 @@ function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
 
             tx.executeSql("INSERT INTO "+ table + " VALUES(" + newId + ", " + year + ", " + month + ", " + day +
                           ", " + sets + ", " + reps + ", " + seconds + ", " + weight + ", '" + status + "');");
+        }
+
+    )
+
+}
+
+function updateSet(id, table, year, month, day, sets, reps, weight, seconds, status) {
+    withDB(
+        function(tx) {
+            console.log("UPDATE "+ table + " SET year=" + year + ", month=" + month + ", day=" + day +
+                        ", sets=" + sets + ", reps=" + reps + ", seconds=" + seconds + ", weight=" + weight +
+                        ", status='" + status + "' WHERE id=" + id +";")
+            tx.executeSql("UPDATE "+ table + " SET year=" + year + ", month=" + month + ", day=" + day +
+                          ", sets=" + sets + ", reps=" + reps + ", seconds=" + seconds + ", weight=" + weight +
+                          ", status='" + status + "' WHERE id=" + id +";");
         }
 
     )
@@ -107,6 +121,30 @@ function getExcercise(list, name, id) {
                              "seconds":r.seconds, "weight":r.weight, "status":r.status});
             }
         }
+    )
+}
+
+function getSet(table, id) {
+    return withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT * FROM " + table + " WHERE id = " + id + ";");
+            return [res.rows.item(0).year, res.rows.item(0).month, res.rows.item(0).day, res.rows.item(0).sets,
+                    res.rows.item(0).reps, res.rows.item(0).seconds, res.rows.item(0).weight, res.rows.item(0).status];
+        }
+    )
+}
+
+function changeStatus(table, id, status) {
+    withDB(
+        function(tx) {
+            try {
+                tx.executeSql("UPDATE " + table + " SET status = '" + status + "' WHERE id = " + id + ";");
+            }
+            catch(e) {
+                console.log(e);
+            }
+        }
+
     )
 }
 

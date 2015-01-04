@@ -118,46 +118,69 @@ Page {
                     remorseAction("Deleting", function() { print("Deleting.... not really") })
                 }
 
-                function parseContent(date) {
+                function parseContent() {
                     datepicker.date = new Date(model.year, model.month-1, model.day, 0, 0, 0);
                     line.text = datepicker.dateText + " - " + model.sets + " x " + model.reps + " x " +
                                 model.weight + " kg";
                 }
 
-                Label {
-                    id: line
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
-                    Component.onCompleted: parseContent(model.date)
-                    truncationMode: TruncationMode.Fade
+                function changeStatus() {
+                    if (lineEnd.text == "Not done") {
+                        lineEnd.text = "Done";
+                        DB.changeStatus(page.tablename, model.id, "Done");
+                    }
+                    else if (lineEnd.text == "Done") {
+                        lineEnd.text = "Fail";
+                        DB.changeStatus(page.tablename, model.id, "Fail");
+                    }
+                    else if (lineEnd.text == "Fail") {
+                        lineEnd.text = "Not done";
+                        DB.changeStatus(page.tablename, model.id, "Not done");
+                    }
                 }
-                Label {
-                    id: lineEnd
-                    text: model.status
 
-                    horizontalAlignment: Text.AlignRight
+                BackgroundItem {
+                    id: bg1
                     anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width - bg2.width
+
+                    Label {
+                        id: line
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
+                        Component.onCompleted: parseContent()
+                        truncationMode: TruncationMode.Fade
+                    }
+                    onClicked: pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id})
+                }
+                BackgroundItem {
+                    id: bg2
+                    width: 170
+                    anchors.left: bg1.right
                     anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
 
-                    color: delegate.highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    Label {
+                        id: lineEnd
+                        text: model.status
+
+                        horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+
+                        color: delegate.highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    }
+                    onClicked: changeStatus()
                 }
 
-                //onClicked: pageStack.push(Qt.resolvedUrl("Excercise.qml"),{name:model.name,id:model.id,info:model.info})
+
 
                 Component {
                     id: contextMenu
                     ContextMenu {
                         MenuItem {
-                            text: "Set done"
-                            onClicked: setStatus("Done")
-                        }
-                        MenuItem {
-                            text: "Set failed"
-                            onClicked: setFailed("Failed")
-                        }
-
-                        MenuItem {
                             text: "Modify"
+                            onClicked: pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id})
                         }
                         MenuItem {
                             text: "Remove"

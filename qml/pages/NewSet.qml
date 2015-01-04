@@ -8,14 +8,36 @@ Dialog {
     property string table
     property string type
 
-    onAccepted: {
-
-        DB.newSet(page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, 0, status.value)
-    }
+    property string id
 
     DatePicker {
         id: datepicker
         visible: false
+    }
+
+    function loadValues() {
+
+        if (typeof page.id == "string") {
+
+            var values = DB.getSet(page.table, page.id);
+
+            console.log(values[0])
+
+            datepicker.date = new Date(values[0], values[1]-1, values[2], 0, 0, 0);
+            sets.text = values[3];
+            reps.text = values[4];
+            weight.text = values[6];
+            status.value = values[7];
+        }
+    }
+
+    onAccepted: {
+        if (typeof page.id == "string") {
+            DB.updateSet(page.id, page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, 0, status.value);
+        }
+        else {
+            DB.newSet(page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, 0, status.value);
+        }
     }
 
     onRejected: model.clear()
@@ -104,6 +126,7 @@ Dialog {
                 }
             }
         }
+        Component.onCompleted: page.loadValues()
     }
 }
 
