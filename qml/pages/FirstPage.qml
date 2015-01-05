@@ -43,8 +43,8 @@ Page {
         // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
         PullDownMenu {
             MenuItem {
-                text: qsTr("New excercise")
-                onClicked: pageStack.push(Qt.resolvedUrl("NewExcercise.qml"))
+                text: qsTr("New exercise")
+                onClicked: pageStack.push(Qt.resolvedUrl("NewExercise.qml"))
             }
             MenuItem {
                 text: qsTr("New program")
@@ -85,19 +85,21 @@ Page {
             }
 
             BackgroundItem {
-                id: backgroundexcercises
+                id: backgroundexercises
 
                 Label {
                     x: Theme.paddingLarge
-                    text:qsTr("Excercises")
+                    text:qsTr("Exercises")
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: Theme.fontSizeLarge
                 }
 
-                onClicked: pageStack.push(Qt.resolvedUrl("ExcerciseList.qml"))
+                onClicked: pageStack.push(Qt.resolvedUrl("ExerciseList.qml"))
             }
+
         }
     }
+    Component.onCompleted: { DB.open(); DB.updateDB(); }
 }
 
 

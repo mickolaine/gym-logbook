@@ -41,13 +41,12 @@ Page {
     property string tablename
 
     ListModel {
-        id: excercise
+        id: exercise
     }
 
     function refresh() {
-        excercise.clear();
-        DB.getExcercise(excercise, name, id);
-        page.tablename = name + id;
+        exercise.clear();
+        DB.getExercise(exercise, tablename);
     }
 
     DatePicker {
@@ -105,7 +104,7 @@ Page {
 
         SilicaListView {
             id: listView
-            model: excercise
+            model: exercise
 
             width: parent.width - 2*Theme.paddingLarge
             anchors.horizontalCenter: parent.horizontalCenter
@@ -115,7 +114,7 @@ Page {
 
                 id: delegate
                 menu: contextMenu
-                ListView.onRemove: animateRemoval(listItem)
+                //ListView.onRemove: animateRemoval(listItem)
 
                 function remove() {
                     remorseAction("Deleting", function() { print("Deleting.... not really") })
@@ -126,7 +125,9 @@ Page {
                     line.text = datepicker.dateText + " - " + model.sets + " x " + model.reps + " x " +
                                 model.weight + " kg";
                 }
-
+                function parseLocalNum(num) {
+                    return +(num.replace(",", "."));
+                }
                 function changeStatus() {
                     if (lineEnd.text == "Not done") {
                         lineEnd.text = "Done";
@@ -199,137 +200,6 @@ Page {
         Component.onCompleted: page.refresh()
     }
 }
-
-
-
-
-/*
-Page {
-    id: page
-    property string name
-    property string id
-    property string info
-    property string tablename
-
-    ListModel {
-        id: excercise
-    }
-
-    function getData() {
-        excercise.clear();
-        DB.getExcercise(excercise, name, id);
-        page.tablename = name + id;
-    }
-
-    DatePicker {
-        id: datepicker
-
-        visible: false
-    }
-
-    SilicaFlickable {
-
-        anchors.fill: parent
-
-        Column {
-            id: header
-
-            PageHeader {
-                title: page.name
-            }
-            Label {
-                x: Theme.paddingLarge
-                text: page.info
-                color: Theme.primaryColor
-                width: page.width - 2*Theme.paddingLarge
-                maximumLineCount: 10
-                wrapMode: Text.WordWrap
-                truncationMode: TruncationMode.Fade
-            }
-
-            Button {
-                text: qsTr("New set")
-                width: page.width - 2*Theme.paddingLarge
-                onClicked: pageStack.push(Qt.resolvedUrl("NewSet.qml"), {table:page.tablename})
-            }
-            Label {
-                x: Theme.paddingLarge
-                text: qsTr("Date - sets x reps x weight")
-
-            }
-
-            SilicaListView {
-                id: listView
-                model: excercise
-
-                width: parent.width
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: header.bottom
-                anchors.bottom: parent.bottom
-
-                delegate: ListItem {
-                    id: delegate
-                    menu: contextMenu
-                    ListView.onRemove: animateRemoval(listItem)
-                    //height: childrenRect.height
-
-                    function remove() {
-                        remorseAction("Deleting", function() { print("Deleting.... not really") })
-                    }
-                    function transformDate(date) {
-                        datepicker.date = new Date(model.year, model.month-1, model.day, 0, 0, 0);
-                        date.text = datepicker.dateText + " - " + model.sets + " x " + model.reps + " x " + model.weight + " kg";
-                    }
-
-                    Label {
-                        id: date
-                        x: Theme.paddingLarge
-                        width: 180
-                        //anchors.verticalCenter: parent.verticalCenter
-                        Component.onCompleted: transformDate(date)
-                    }
-                    /*Label {
-                        id: sets
-                        width: 60
-                        text: model.sets
-                        anchors.left: date.right
-                        //anchors.verticalCenter: parent.verticalCenter
-                    }
-                    Label {
-                        id: reps
-                        width: 60
-                        text: model.reps
-                        anchors.left: sets.right
-                        //anchors.verticalCenter: parent.verticalCenter
-                    }
-                    Label {
-                        id: weight
-                        width: 100
-                        text: model.weight
-                        anchors.left: reps.right
-                        //anchors.verticalCenter: parent.verticalCenter
-                    }*
-
-                    Component {
-                        id: contextMenu
-                        ContextMenu {
-                            MenuItem {
-                                text: "Remove"
-                                onClicked: remove()
-                            }
-                        }
-                    }
-
-                }
-                VerticalScrollDecorator {}
-            }
-        }
-
-
-        Component.onCompleted: page.getData()
-    }
-}
-*/
 
 
 

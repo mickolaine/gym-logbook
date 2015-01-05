@@ -13,20 +13,6 @@
     </message>
 </context>
 <context>
-    <name>Excercise</name>
-    <message>
-        <source>Date - sets x reps x weight</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ExcerciseList</name>
-    <message>
-        <source>Excercises</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Excercises</name>
     <message>
         <source>Nested Page</source>
@@ -35,6 +21,20 @@
     <message>
         <source>Item</source>
         <translation type="obsolete">Element</translation>
+    </message>
+</context>
+<context>
+    <name>Exercise</name>
+    <message>
+        <source>Date - sets x reps x weight</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ExerciseList</name>
+    <message>
+        <source>Exercises</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -50,10 +50,6 @@
     <message>
         <source>Hello Sailors</source>
         <translation type="vanished">Hallo Matrosen</translation>
-    </message>
-    <message>
-        <source>New excercise</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>New program</source>
@@ -72,7 +68,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Excercises</source>
+        <source>New exercise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exercises</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -86,12 +86,15 @@
         <source>Item</source>
         <translation type="obsolete">Element</translation>
     </message>
+</context>
+<context>
+    <name>NewExercise</name>
     <message>
-        <source>New excercise</source>
+        <source>New exercise</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type of the excercise.</source>
+        <source>Type of the exercise.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

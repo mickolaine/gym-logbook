@@ -36,21 +36,13 @@ import "../Database.js" as DB
 Dialog {
     id: page
 
-    /*onDone: {
-        if (DB.hasExcercise(name.text)) {
-            acceptPending: true
-            name.label = "Name already exists!"
-            name.forceActiveFocus()
-        }
-        else {
-            acceptPending: false
-            DB.newExcercise(name.text, info.text)
-        }
-    }*/
-
     onAccepted: {
 
-        DB.newExcercise(name.text, info.text, type.value)
+        DB.newExercise(name.text, info.text, type.value);
+        pageStack.find( function(p) {
+            try { p.refresh(); } catch (e) {};
+            return false;
+        } );
     }
 
     onRejected: model.clear()
@@ -67,15 +59,8 @@ Dialog {
             spacing: Theme.paddingLarge
 
             PageHeader {
-                title: qsTr("New excercise")
+                title: qsTr("New exercise")
             }
-
-            /*Label {
-                id: namelabel
-                x: Theme.paddingLarge
-                text: qsTr("Name")
-                width: parent.width
-            }*/
 
             TextField {
                 id: name
@@ -86,13 +71,6 @@ Dialog {
                 width: parent.width
                 focus: true
             }
-
-            /*Label {
-                id: infolabel
-                x: Theme.paddingLarge
-                text: qsTr("Additional information")
-                width: parent.width
-            }*/
 
             TextArea {
                 id: info
@@ -108,7 +86,7 @@ Dialog {
                 x: Theme.paddingLarge
                 width: 480
                 label: "Measure:"
-                description: qsTr("Type of the excercise.")
+                description: qsTr("Type of the exercise.")
                 menu: ContextMenu {
                     MenuItem { text: "Weight" }
                     MenuItem { text: "Time" }

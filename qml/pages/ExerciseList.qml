@@ -37,12 +37,12 @@ Page {
     id: page
 
     ListModel {
-        id: excercises
+        id: exercises
     }
 
     function refresh() {
-        excercises.clear();
-        DB.getExcercises(excercises);
+        exercises.clear();
+        DB.getExercises(exercises);
     }
 
     SilicaFlickable {
@@ -51,7 +51,7 @@ Page {
 
 
         PageHeader {
-            title: qsTr("Excercises")
+            title: qsTr("Exercises")
             id: header
         }
 
@@ -66,8 +66,8 @@ Page {
                                            )
             }
             MenuItem {
-                text: "New excercise"
-                onClicked: pageStack.push(Qt.resolvedUrl("NewExcercise.qml"))
+                text: "New exercise"
+                onClicked: pageStack.push(Qt.resolvedUrl("NewExercise.qml"))
             }
         }
 
@@ -75,7 +75,7 @@ Page {
 
         SilicaListView {
             id: listView
-            model: excercises
+            model: exercises
 
             width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
@@ -85,7 +85,7 @@ Page {
             delegate: ListItem {
                 id: delegate
                 menu: contextMenu
-                ListView.onRemove: animateRemoval(listItem)
+                //ListView.onRemove: animateRemoval(listItem)
 
                 function remove() {
                     remorseAction("Deleting", function() { print("Deleting.... not really") })
@@ -112,7 +112,7 @@ Page {
 
                 }
 
-                onClicked: pageStack.push(Qt.resolvedUrl("Excercise.qml"),{name:model.name,id:model.id,info:model.info})
+                onClicked: pageStack.push(Qt.resolvedUrl("Exercise.qml"),{name:model.name,id:model.id,info:model.info,tablename:model.dbname})
 
                 Component {
                     id: contextMenu

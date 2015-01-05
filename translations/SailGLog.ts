@@ -9,25 +9,21 @@
     </message>
 </context>
 <context>
-    <name>Excercise</name>
+    <name>Exercise</name>
     <message>
         <source>Date - sets x reps x weight</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>ExcerciseList</name>
+    <name>ExerciseList</name>
     <message>
-        <source>Excercises</source>
+        <source>Exercises</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>FirstPage</name>
-    <message>
-        <source>New excercise</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>New program</source>
         <translation type="unfinished"></translation>
@@ -45,18 +41,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Excercises</source>
+        <source>New exercise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exercises</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>NewExcercise</name>
+    <name>NewExercise</name>
     <message>
-        <source>New excercise</source>
+        <source>New exercise</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type of the excercise.</source>
+        <source>Type of the exercise.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -83,7 +83,8 @@ Dialog {
                 onClicked: {
                     var dialog = pageStack.push(pickerComponent, datepicker.date)
                     dialog.accepted.connect(function() {
-                        datefield.text = dialog.dateText
+                        datefield.text = dialog.dateText;
+                        datepicker.date = dialog.date;
                     })
                 }
             }
