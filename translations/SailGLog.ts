@@ -9,6 +9,17 @@
     </message>
 </context>
 <context>
+    <name>EditWorkout</name>
+    <message>
+        <source>Accept workout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New exercise</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Exercise</name>
     <message>
         <source>Date - sets x reps x weight</source>
@@ -24,10 +35,6 @@
 </context>
 <context>
     <name>FirstPage</name>
-    <message>
-        <source>New program</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>GymLogbook</source>
         <translation type="unfinished"></translation>
@@ -46,6 +53,10 @@
     </message>
     <message>
         <source>Exercises</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New workout</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -88,9 +99,20 @@
     </message>
 </context>
 <context>
-    <name>Workouts</name>
+    <name>NewWorkout</name>
     <message>
-        <source>Not implemented</source>
+        <source>How many different workouts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Workout</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkoutList</name>
+    <message>
+        <source>Workouts</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

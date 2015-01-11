@@ -7,9 +7,10 @@ function open() {
     var db = LS.LocalStorage.openDatabaseSync("gym-logbook", "", "Gym Logbook database", 1000000);
 
     if (db.version === "") {
-      db.changeVersion("", "2",
+      db.changeVersion("", "4",
         function(tx) {
           tx.executeSql("CREATE TABLE IF NOT EXISTS exercises(id INTEGER UNIQUE, name TEXT, additional TEXT, type TEXT, dbname TEXT);");
+          tx.executeSql("CREATE TABLE IF NOT EXISTS workouts(id INTEGER UNIQUE, name TEXT, additional TEXT, dbname TEXT);");
         }
       );
     }
@@ -19,6 +20,7 @@ function open() {
   return db;
 }
 
+// TODO: Remove this function and the need for it before release
 function updateDB() {
     try {
         var db = LS.LocalStorage.openDatabaseSync("gym-logbook", "", "Gym Logbook database", 1000000);
@@ -32,9 +34,34 @@ function updateDB() {
                     var res = tx.executeSql("SELECT * from exercises WHERE dbname IS NULL;");
                     for ( var i = 0; i < res.rows.length; i++ ) {
                         var r = res.rows.item(i);
-                        var dbname = r.name.toLowerCase().replace(/[^a-z-]/g,"") + "_" + r.id;
+                        var dbname = "e_" + r.name.toLowerCase().replace(/[^a-z-]/g,"") + "_" + r.id;
                         tx.executeSql("UPDATE exercises SET dbname = '" + dbname + "' WHERE id = " + r.id + ";");
                         tx.executeSql("ALTER TABLE " + r.name + r.id + " RENAME TO " + dbname + ";");
+                    }
+                }
+            );
+        }
+        if (db.version === "2") {
+            db.changeVersion("2", "3",
+                function(tx){
+                    tx.executeSql("CREATE TABLE IF NOT EXISTS workouts(id INTEGER UNIQUE, name TEXT, additional TEXT, dbname TEXT);");
+                }
+            );
+        }
+        if (db.version === "3") {
+            db.changeVersion("3", "4",
+                function(tx) {
+                    var res = tx.executeSql("SELECT * from exercises;");
+                    for ( var i = 0; i < res.rows.length; i++ ) {
+                        var r = res.rows.item(i);
+                        tx.executeSql("UPDATE exercises SET dbname = 'e_" + r.dbname + "' WHERE dbname = '" + r.dbname + "';");
+                        tx.executeSql("ALTER TABLE " + r.dbname + " RENAME TO e_" + r.dbname + ";");
+                    }
+                    res = tx.executeSql("SELECT * from workouts;");
+                    for ( var i = 0; i < res.rows.length; i++ ) {
+                        var r = res.rows.item(i);
+                        tx.executeSql("UPDATE workouts SET dbname = 'w_" + r.dbname + "' WHERE dbname = '" + r.dbname + "';");
+                        tx.executeSql("ALTER TABLE " + r.dbname + " RENAME TO w_" + r.dbname + ";");
                     }
                 }
             );
@@ -44,6 +71,77 @@ function updateDB() {
         console.log("Failure in updating database: " + e);
 
     }
+}
+
+function newWorkout(name, info, days) {
+    return withDB(
+        function(tx) {
+            try {
+                var result = tx.executeSql("SELECT max(id) FROM workouts;");
+                //print(result.rows.item(0)["max(id)"]);
+                var maxId = result.rows.item(0)["max(id)"];
+
+            }
+            catch(e) {
+                var maxId = 0;
+            }
+            var newId = maxId + 1;
+            var dbname = "w_" + name.toLowerCase().replace(/[^a-z-]/g,"") + "_" + newId;
+            tx.executeSql("CREATE TABLE IF NOT EXISTS " + dbname +
+                          "(id INTEGER UNIQUE, day TEXT, exercise INTEGER);");
+            tx.executeSql("INSERT INTO workouts VALUES(?, ?, ?, ?);", [newId, name, info, dbname]);
+
+            for (var i = 0; i < parseInt(days); i++ ) {
+                tx.executeSql("INSERT INTO " + dbname + " VALUES( " + i +", 'Day " + (i+1) + "', null);");
+            }
+
+            return dbname;
+        }
+    );
+}
+
+function getWorkoutDays(table, workouts) {
+    withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT * FROM " + table + " WHERE exercise IS NULL ORDER BY id;");
+            for ( var i = 0; i < res.rows.length; i++ ) {
+                var r = res.rows.item(i);
+                workouts.append({"day": r.day, "id": r.id});
+            }
+        }
+    );
+}
+
+function getWorkoutContent(table, workouts) {
+    withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT * FROM " + table + " WHERE exercise IS NOT NULL ORDER BY id;");
+            for ( var i = 0; i < res.rows.length; i++ ) {
+                var r = res.rows.item(i);
+                workouts.append({"day": r.day, "id": r.id, "exercise":r.exercise});
+            }
+        }
+    );
+}
+
+function getWorkoutlist(workouts) {
+    withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT * FROM workouts ORDER BY id;");
+            for ( var i = 0; i < res.rows.length; i++ ) {
+                var r = res.rows.item(i);
+                workouts.append({"id":r.id, "name":r.name, "info":r.additional, "dbname":r.dbname});
+            }
+        }
+    );
+}
+
+function deleteWorkout(id) {
+    withDB(
+        function(tx) {
+            tx.executeSql("DELETE FROM workouts WHERE id = ?;", [id]);
+        }
+    )
 }
 
 function newExercise(name, additional, type, tablename) {
@@ -61,13 +159,13 @@ function newExercise(name, additional, type, tablename) {
                 var newId = 0;
             }
             var newId = newId + 1;
-            var dbname = name.toLowerCase().replace(/[^a-z-]/g,"") + "_" + newId;
+            var dbname = "e_" + name.toLowerCase().replace(/[^a-z-]/g,"") + "_" + newId;
             tx.executeSql("CREATE TABLE IF NOT EXISTS " + dbname +
                           "(id INTEGER UNIQUE, year INTEGER, month INTEGER, day INTEGER, " +
                           "sets INTEGER, reps INTEGER, seconds REAL, weight REAL, status INTEGER);");
             tx.executeSql("INSERT INTO exercises VALUES(?, ?, ?, ?, ?);", [newId, name, additional, type, dbname]);
         }
-    )
+    );
 }
 
 function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
@@ -166,6 +264,18 @@ function changeStatus(table, id, status) {
 
     )
 }
+
+function addworkout(days) {
+
+    var id = days.count + 1;
+    if (isNaN(id)) {
+        id = 1;
+    }
+    console.log(id);
+    days.append({"id": id, "day": "Day " + id, "exercise": null});
+
+}
+
 
 function clear() {
     print("Doesn't do nuthin'.")

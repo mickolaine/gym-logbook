@@ -47,8 +47,8 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("NewExercise.qml"))
             }
             MenuItem {
-                text: qsTr("New program")
-                onClicked: pageStack.push(Qt.resolvedUrl("NewProgram.qml"))
+                text: qsTr("New workout")
+                onClicked: pageStack.push(Qt.resolvedUrl("NewWorkout.qml"))
             }
         }
 
@@ -81,7 +81,7 @@ Page {
                     font.pixelSize: Theme.fontSizeLarge
                 }
 
-                onClicked: pageStack.push(Qt.resolvedUrl("Workouts.qml"))
+                onClicked: pageStack.push(Qt.resolvedUrl("WorkoutList.qml"))
             }
 
             BackgroundItem {

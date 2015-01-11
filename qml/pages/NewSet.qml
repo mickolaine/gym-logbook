@@ -29,7 +29,13 @@ Dialog {
             sets.text = values[3];
             reps.text = values[4];
             weight.text = values[6];
-            status.value = values[7];
+            if (values[7] === "Done") {
+                status.currentIndex = 1;
+            } else if (values[7] === "Not done") {
+                status.currentIndex = 0;
+            } else if (values[7] === "Fail") {
+                status.currentIndex = 2;
+            }
         }
     }
 

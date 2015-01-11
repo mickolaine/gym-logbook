@@ -13,6 +13,17 @@
     </message>
 </context>
 <context>
+    <name>EditWorkout</name>
+    <message>
+        <source>Accept workout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New exercise</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Excercises</name>
     <message>
         <source>Nested Page</source>
@@ -52,10 +63,6 @@
         <translation type="vanished">Hallo Matrosen</translation>
     </message>
     <message>
-        <source>New program</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>GymLogbook</source>
         <translation type="unfinished"></translation>
     </message>
@@ -73,6 +80,10 @@
     </message>
     <message>
         <source>Exercises</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New workout</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -137,6 +148,17 @@
     </message>
 </context>
 <context>
+    <name>NewWorkout</name>
+    <message>
+        <source>How many different workouts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Workout</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SecondPage</name>
     <message>
         <source>Nested Page</source>
@@ -148,6 +170,13 @@
     </message>
 </context>
 <context>
+    <name>WorkoutList</name>
+    <message>
+        <source>Workouts</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Workouts</name>
     <message>
         <source>Nested Page</source>
@@ -156,10 +185,6 @@
     <message>
         <source>Item</source>
         <translation type="obsolete">Element</translation>
-    </message>
-    <message>
-        <source>Not implemented</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

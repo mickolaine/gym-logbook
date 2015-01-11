@@ -67,7 +67,7 @@ Dialog {
                 x: Theme.paddingLarge
                 label: "Name"
                 labelVisible: true
-                placeholderText: "Bench press"
+                placeholderText: "Name, eg. Bench press"
                 width: parent.width
                 focus: true
             }
@@ -77,6 +77,7 @@ Dialog {
                 x: Theme.paddingLarge
                 label: "Additional information"
                 labelVisible: true
+                placeholderText: "Additional information"
                 width: parent.width
                 focus: true
             }

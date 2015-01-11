@@ -25,13 +25,16 @@ OTHER_FILES += qml/SailGLog.qml \
     translations/*.ts \
     SailGLog.desktop \
     qml/pages/NewProgram.qml \
-    qml/pages/Workouts.qml \
     qml/Database.js \
     qml/pages/NewSet.qml \
     Readme.md \
     qml/pages/Exercise.qml \
     qml/pages/ExerciseList.qml \
-    qml/pages/NewExercise.qml
+    qml/pages/NewExercise.qml \
+    qml/pages/NewWorkout.qml \
+    LICENSE.txt \
+    qml/pages/EditWorkout.qml \
+    qml/pages/WorkoutList.qml
 
 # to disable building translations every time, comment out the
 # following CONFIG line
