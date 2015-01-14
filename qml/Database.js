@@ -91,11 +91,41 @@ function newWorkout(name, info, days) {
                           "(id INTEGER UNIQUE, day TEXT, exercise INTEGER);");
             tx.executeSql("INSERT INTO workouts VALUES(?, ?, ?, ?);", [newId, name, info, dbname]);
 
-            for (var i = 0; i < parseInt(days); i++ ) {
-                tx.executeSql("INSERT INTO " + dbname + " VALUES( " + i +", 'Day " + (i+1) + "', null);");
+            var id = 0;
+            for (var i = 0; i < days.count; i++) {
+                //console.log("INSERT INTO " + dbname + " VALUES(" + days.get(i).id + ", " + days.get(i).day + ", null);");
+                tx.executeSql("INSERT INTO " + dbname + " VALUES(" + days.get(i).id + ", '" + days.get(i).day + "', null);");
+                id++;
             }
 
             return dbname;
+        }
+    );
+}
+
+function addExercise(table, day, exercise) {
+    withDB(
+        function(tx) {
+            try {
+                var res = tx.executeSql("SELECT max(id) FROM " + table + ";");
+                var maxId = res.rows.item(0)["max(id)"];
+            }
+            catch(e) {
+                // Shouldn't end in here. At least one entry should be in table
+                var maxId = 0;
+            }
+
+            var newId = maxId + 1;
+            console.log("New Id is " + newId);
+            tx.executeSql("INSERT INTO " + table + " VALUES(?, ?, ?);", [newId, day, exercise]);
+        }
+    );
+}
+
+function removeExercise(table, wid) {
+    withDB(
+        function(tx) {
+            tx.executeSql("DELETE FROM " + table + " WHERE id = " + wid + ";");
         }
     );
 }
@@ -107,18 +137,31 @@ function getWorkoutDays(table, workouts) {
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
                 workouts.append({"day": r.day, "id": r.id});
+                console.log("Got: " + r.day + ", " + r.id);
             }
         }
     );
 }
 
-function getWorkoutContent(table, workouts) {
+function getWorkoutContent(table, day, exercises) {
     withDB(
         function(tx) {
-            var res = tx.executeSql("SELECT * FROM " + table + " WHERE exercise IS NOT NULL ORDER BY id;");
+            // Long query is long...
+            var res = tx.executeSql("SELECT " + table + ".id as wid, " +
+                                                table + ".day as day," +
+                                               "exercises.id as eid, " +
+                                               "exercises.name as name, " +
+                                               "exercises.additional as info " +
+                                    "FROM " + table + " LEFT JOIN exercises " +
+                                    "WHERE " +
+                                        table + ".exercise = exercises.id AND " +
+                                        table + ".day = '" + day + "' AND " +
+                                        "exercise IS NOT NULL " +
+                                    "ORDER BY " + table + ".id;");
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
-                workouts.append({"day": r.day, "id": r.id, "exercise":r.exercise});
+                exercises.append({"wid": r.wid, "day": r.day, "eid": r.eid, "exercise": r.name, "info": r.info});
+                //console.log("Got: " + r.wid + ", " + r.day + ", " + r.eid + " and " + r.name);
             }
         }
     );
@@ -265,17 +308,34 @@ function changeStatus(table, id, status) {
     )
 }
 
-function addworkout(days) {
+function addDay(days) {
 
-    var id = days.count + 1;
+    var id = days.count;
     if (isNaN(id)) {
-        id = 1;
+        id = 0;
     }
-    console.log(id);
-    days.append({"id": id, "day": "Day " + id, "exercise": null});
 
+    days.set(id, {"id": id + 1, "day": "Day " + (id + 1), "exercise": null});
 }
 
+function isLast(days, id) {
+
+    var max = days.count;
+    if ((parseInt(id + 1) === max) | (days.count === 1)){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function removeDay(days, id) {
+    //console.log(id);
+    //console.log(days.count);
+    days.remove(parseInt(id));
+    //console.log("move " + (parseInt(id) + 1) + ", to " + parseInt(id) + " with range " + (days.count - parseInt(id)));
+    days.move(parseInt(id)+1, parseInt(id), days.count - parseInt(id));
+}
 
 function clear() {
     print("Doesn't do nuthin'.")

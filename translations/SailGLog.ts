@@ -9,13 +9,28 @@
     </message>
 </context>
 <context>
+    <name>EditDay</name>
+    <message>
+        <source>Accept day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move down</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EditWorkout</name>
     <message>
         <source>Accept workout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New exercise</source>
+        <source>Add exercises to workout by selecting it.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -105,7 +120,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Workout</source>
+        <source>Accept workout</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SelectExercise</name>
+    <message>
+        <source>Exercises</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

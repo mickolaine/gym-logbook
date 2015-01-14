@@ -34,7 +34,9 @@ OTHER_FILES += qml/SailGLog.qml \
     qml/pages/NewWorkout.qml \
     LICENSE.txt \
     qml/pages/EditWorkout.qml \
-    qml/pages/WorkoutList.qml
+    qml/pages/WorkoutList.qml \
+    qml/pages/EditDay.qml \
+    qml/pages/SelectExercise.qml
 
 # to disable building translations every time, comment out the
 # following CONFIG line

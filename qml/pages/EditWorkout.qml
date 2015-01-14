@@ -8,19 +8,18 @@ Dialog {
     property string dbname
 
     onOpened: {
+        console.log("Check two");
+
         pageStack.find( function(p) {
             try { page.dbname = p.getTable(); } catch (e) {};
             return false;
         } );
-        DB.getWorkouts(page.dbname, workouts)
+        DB.getWorkoutDays(page.dbname, workouts);
     }
 
     ListModel {
         id: workouts
     }
-
-
-
 
     SilicaFlickable {
 
@@ -30,7 +29,6 @@ Dialog {
         }
 
         anchors.fill: parent
-
 
         PullDownMenu {
             MenuItem {
@@ -48,71 +46,34 @@ Dialog {
             }
         }
 
+        Label {
+            id: label
+            text: qsTr("Add exercises to workout by selecting it.")
+            anchors.top: header.bottom
+        }
+
         SilicaListView {
             id: listView
             model: workouts
 
-            anchors.top: header.bottom
+            anchors.top: label.bottom
             width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            contentHeight: childrenRect.height
             delegate: ListItem {
                 id: delegate
 
-                TextArea {
+                Label {
                     id: daylabel
                     x: Theme.paddingLarge
-                    label: model.day
-                    labelVisible: true
-                    placeholderText: model.day
+                    text: model.day
                     width: parent.width
                     focus: true
                 }
 
-                Button {
-                    id: buttonNew
-                    anchors.top: daylabel.bottom
-                    text: qsTr("New exercise")
-                }
-
-                ListModel {
-                    id: day
-                }
-
-                Component.onCompleted: DB.getWorkoutContent(page.dbname, workouts)
-
-                SilicaListView {
-                    id: dayview
-                    model: day
-
-                    anchors.top: daylabel.bottom
-                    anchors.bottom: parent.bottom
-                    width: parent.width
-
-                    delegate: ListItem {
-                        id: daydelegate
-
-                        Label {
-                            id: excercise
-
-                            text: model.name
-                        }
-                    }
-
-                }
-
-                Component {
-                    id: contextMenu
-                    ContextMenu {
-                        MenuItem {
-                            text: "Remove"
-                            onClicked: remove()
-                        }
-                    }
-                }
+                onClicked: pageStack.push(Qt.resolvedUrl("EditDay.qml"),{dbname:page.dbname, day:model.day})
             }
-            VerticalScrollDecorator {}
         }
+        VerticalScrollDecorator {}
     }
 }

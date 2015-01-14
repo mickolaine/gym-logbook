@@ -10,14 +10,19 @@ Dialog {
     acceptDestination: Qt.resolvedUrl("EditWorkout.qml")
     acceptDestinationProperties: {dbname:page.dbname}
 
-    onOpened: DB.addworkout(days);
+    onOpened: {
+        DB.addDay(days);
+    }
     onDone: {
-        page.dbname = DB.newWorkout(name.text, info.text, split.value);
+        page.dbname = DB.newWorkout(name.text, info.text, days);
+        console.log("Check one");
+        //console.log(listView.children);
     }
 
     onRejected: model.clear()
 
     function getTable() {
+        console.log("Check three");
         return page.dbname;
     }
 
@@ -26,25 +31,27 @@ Dialog {
     }
 
     SilicaFlickable {
-        //contentHeight: page.height
+        contentHeight: page.height
 
         id: entry
         anchors.fill: parent
 
+        PageHeader {
+            id: header
+            title: qsTr("Accept workout")
+        }
+
         Column {
             id: column
 
+            anchors.top: header.bottom
             width: page.width
             spacing: Theme.paddingLarge
-
-            PageHeader {
-                title: qsTr("Workout")
-            }
 
             TextField {
                 id: name
                 x: Theme.paddingLarge
-                label: "Name"
+                label: "Name of workout plan"
                 placeholderText: "Name"
                 width: parent.width
                 focus: true
@@ -66,40 +73,44 @@ Dialog {
                 width: parent.width
             }
 
-            /*Button {
-                id: addworkout
-                x: Theme.paddingLarge
-                text: qsTr("Add workout")
-                onClicked: DB.addworkout(days)
-            }*/
+        }
 
-            SilicaListView {
-                id: listView
-                model: days
+        SilicaListView {
+            id: listView
+            model: days
 
-                spacing: Theme.paddingLarge
-                width: parent.width
-                //anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: column.bottom
+            anchors.bottom: parent.bottom
+            contentHeight: Theme.itemSizeMedium
+            spacing: Theme.paddingLarge
 
-                anchors.bottom: parent.bottom
+            delegate: ListItem {
+                id: delegate
 
-                delegate: ListItem {
-                    id: delegate
+                TextField {
+                    id: daylabel
+                    x: Theme.paddingLarge
+                    label: model.day
+                    placeholderText: model.day
+                    width: parent.width - 1.5*add.width
+                    onTextChanged: {days.set(index, {"day": text})}
+                }
 
-                    TextField {
-                        id: daylabel
-                        x: Theme.paddingLarge
-                        label: model.day
-                        placeholderText: model.day
-                        width: parent.width - 2*pause.width
-                    }
-
-                    IconButton {
-                        id: pause
-                        anchors.left: daylabel.right
-                        icon.source: "image://theme/icon-l-add"
-                        onClicked: DB.addworkout(days)
-                    }
+                IconButton {
+                    id: add
+                    anchors.left: daylabel.right
+                    icon.source: "image://theme/icon-l-add"
+                    onClicked: DB.addDay(days)
+                    visible: DB.isLast(days, index)
+                }
+                IconButton {
+                    id: del
+                    anchors.left: daylabel.right
+                    icon.source: "image://theme/icon-l-clear"
+                    onClicked: DB.removeDay(days, index)
+                    visible: !DB.isLast(days, index)
                 }
             }
         }
