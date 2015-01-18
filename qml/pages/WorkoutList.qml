@@ -51,12 +51,12 @@ Page {
 
 
         PageHeader {
-            title: qsTr("Workouts")
+            title: qsTr("Workout routines")
             id: header
         }
 
         PullDownMenu {
-            MenuItem {
+            /*MenuItem {
                 text: "Delete All"
                 onClicked: remorse.execute( "Deleting All Entries",
                                                function() {
@@ -64,7 +64,7 @@ Page {
                                                    page.refresh()
                                                }
                                            )
-            }
+            }*/
             MenuItem {
                 text: "New workout"
                 onClicked: pageStack.push(Qt.resolvedUrl("NewWorkout.qml"))
@@ -115,7 +115,7 @@ Page {
 
                 }
 
-                onClicked: pageStack.push(Qt.resolvedUrl("EditWorkout.qml"),{dbname:model.dbname})
+                onClicked: pageStack.push(Qt.resolvedUrl("ShowWorkout.qml"),{dbname:model.dbname})
 
                 Component {
                     id: contextMenu

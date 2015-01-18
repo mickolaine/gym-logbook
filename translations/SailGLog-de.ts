@@ -30,11 +30,11 @@
 <context>
     <name>EditWorkout</name>
     <message>
-        <source>Accept workout</source>
+        <source>Accept routine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add exercises to workout by selecting it.</source>
+        <source>Select workout to edit:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -78,18 +78,6 @@
         <translation type="vanished">Hallo Matrosen</translation>
     </message>
     <message>
-        <source>GymLogbook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Workouts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Salil eka, salil vika</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>New exercise</source>
         <translation type="unfinished"></translation>
     </message>
@@ -98,7 +86,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New workout</source>
+        <source>Gym Logbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New workout routine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Workout routines</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -194,7 +190,7 @@
 <context>
     <name>WorkoutList</name>
     <message>
-        <source>Workouts</source>
+        <source>Workout routines</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

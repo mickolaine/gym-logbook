@@ -12,6 +12,13 @@ Dialog {
         refresh();
     }
 
+    onAccepted: {
+        pageStack.find( function(p) {
+            try { p.refresh(); } catch (e) {};
+            return false;
+        } );
+    }
+
     ListModel {
         id: exercises
     }
@@ -23,7 +30,6 @@ Dialog {
 
     function refresh() {
         exercises.clear();
-        console.log(page.dbname);
         DB.getWorkoutContent(page.dbname, page.day, exercises);
     }
 
@@ -83,11 +89,17 @@ Dialog {
                     ContextMenu {
                         MenuItem {
                             text: qsTr("Move up")
-                            onClicked: {}
+                            onClicked: {
+                                DB.moveExercise(page.dbname, model.wid, model.day, true);
+                                refresh();
+                            }
                         }
                         MenuItem {
                             text: qsTr("Move down")
-                            onClicked: {}
+                            onClicked: {
+                                DB.moveExercise(page.dbname, model.wid, model.day, false);
+                                refresh();
+                            }
                         }
                         MenuItem {
                             text: "Remove"

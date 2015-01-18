@@ -58,6 +58,7 @@ Page {
 
         anchors.fill: parent
 
+
         PageHeader {
             title: page.name
             id: header
@@ -77,20 +78,24 @@ Page {
         Label {
             id: key
             x: Theme.paddingLarge
+            height: 50
             anchors.top: info.bottom
+            font.pixelSize: Theme.fontSizeExtraSmall
+            color: Theme.secondaryColor
+            verticalAlignment: Text.AlignBottom
             text: qsTr("Date - sets x reps x weight")
 
         }
 
         PullDownMenu {
-            MenuItem {
+            /*MenuItem {
                 text: "Delete All"
                 onClicked: remorse.execute( "Deleting All Entries",
                                                function() {
                                                    page.refresh();
                                                }
                                            )
-            }
+            }*/
             MenuItem {
                 text: "New set"
                 onClicked: {

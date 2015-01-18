@@ -10,21 +10,19 @@
 #   - translation filenames have to be changed
 
 # The name of your application
-TARGET = SailGLog
+TARGET = gymlogbook
 
 CONFIG += sailfishapp
 
-SOURCES += src/SailGLog.cpp
+SOURCES += src/gymlogbook.cpp
 
-OTHER_FILES += qml/SailGLog.qml \
+OTHER_FILES += qml/gymlogbook.qml \
     qml/cover/CoverPage.qml \
     qml/pages/FirstPage.qml \
-    rpm/SailGLog.changes.in \
-    rpm/SailGLog.spec \
-    rpm/SailGLog.yaml \
+    rpm/gymlogbook.changes.in \
+    rpm/gymlogbook.spec \
+    rpm/gymlogbook.yaml \
     translations/*.ts \
-    SailGLog.desktop \
-    qml/pages/NewProgram.qml \
     qml/Database.js \
     qml/pages/NewSet.qml \
     Readme.md \
@@ -36,10 +34,12 @@ OTHER_FILES += qml/SailGLog.qml \
     qml/pages/EditWorkout.qml \
     qml/pages/WorkoutList.qml \
     qml/pages/EditDay.qml \
-    qml/pages/SelectExercise.qml
+    qml/pages/SelectExercise.qml \
+    qml/pages/ShowWorkout.qml \
+    gymlogbook.desktop
 
 # to disable building translations every time, comment out the
 # following CONFIG line
-CONFIG += sailfishapp_i18n
-TRANSLATIONS += translations/SailGLog-de.ts
+#CONFIG += sailfishapp_i18n
+#TRANSLATIONS += translations/gymlogbook-de.ts
 

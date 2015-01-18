@@ -8,7 +8,6 @@ Dialog {
     property string dbname
 
     onOpened: {
-        console.log("Check two");
 
         pageStack.find( function(p) {
             try { page.dbname = p.getTable(); } catch (e) {};
@@ -17,20 +16,33 @@ Dialog {
         DB.getWorkoutDays(page.dbname, workouts);
     }
 
+    onAccepted: {
+        pageStack.find( function(p) {
+            try { p.refresh(); } catch (e) {};
+            return false;
+        } );
+    }
+
+    onRejected: {
+        workouts.clear();
+    }
+
     ListModel {
         id: workouts
     }
+
+
 
     SilicaFlickable {
 
         PageHeader {
             id: header
-            title: qsTr("Accept workout")
+            title: qsTr("Accept routine")
         }
 
         anchors.fill: parent
 
-        PullDownMenu {
+        /*PullDownMenu {
             MenuItem {
                 text: "Delete All"
                 onClicked: remorse.execute( "Deleting All Entries",
@@ -44,12 +56,16 @@ Dialog {
                 text: "New exercise"
                 onClicked: pageStack.push(Qt.resolvedUrl("NewExercise.qml"))
             }
-        }
+        }*/
 
         Label {
             id: label
-            text: qsTr("Add exercises to workout by selecting it.")
+            text: qsTr("Select workout to edit:")
             anchors.top: header.bottom
+            x: Theme.paddingLarge
+            width: parent.width
+            height: Theme.itemSizeSmall
+
         }
 
         SilicaListView {

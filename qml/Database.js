@@ -130,6 +130,59 @@ function removeExercise(table, wid) {
     );
 }
 
+function deleteExercise(id) {
+    return withDB(
+        function(tx) {
+            try {
+                var res = tx.executeSql("SELECT * from exercises WHERE id = " + id + ";");
+                var table = res.rows.item(0).dbname;
+
+                tx.executeSql("DELETE FROM exercises WHERE id = " + id + ";");
+                tx.executeSql("DROP TABLE " + table + ";");
+                return true;
+            }
+            catch(e) {return false}
+        }
+
+    );
+}
+
+function moveExercise(table, wid, day, up){
+    withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT " + table + ".id as wid, " +
+                                                table + ".day as day," +
+                                            "exercises.id as eid, " +
+                                            "exercises.name as name, " +
+                                            "exercises.additional as info " +
+                                 "FROM " + table + " LEFT JOIN exercises " +
+                                 "WHERE " +
+                                     table + ".exercise = exercises.id AND " +
+                                     table + ".day = '" + day + "' AND " +
+                                     "exercise IS NOT NULL " +
+                                 "ORDER BY " + table + ".id;");
+
+            var i = 1;
+            while ( i < res.rows.length) {
+                if (wid === res.rows.item(i).wid) {
+                    var newid;
+                    if (up) {
+                        newid = res.rows.item(i-1).wid;
+                    }
+                    else {
+                        newid = res.rows.item(i+1).wid;
+                    }
+
+                    tx.executeSql("UPDATE " + table + " SET id = 99999 WHERE id = " + wid + ";");
+                    tx.executeSql("UPDATE " + table + " SET id = " + wid + " WHERE id = " + newid + ";");
+                    tx.executeSql("UPDATE " + table + " SET id = " + newid + " WHERE id = 99999;");
+                }
+                i++;
+            }
+        }
+    );
+}
+
 function getWorkoutDays(table, workouts) {
     withDB(
         function(tx) {
@@ -137,7 +190,31 @@ function getWorkoutDays(table, workouts) {
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
                 workouts.append({"day": r.day, "id": r.id});
-                console.log("Got: " + r.day + ", " + r.id);
+                //console.log("Got: " + r.day + ", " + r.id);
+            }
+        }
+    );
+}
+
+function getWorkoutRoutine(table, routine) {
+    withDB(
+        function(tx) {
+            // Long query is long...
+            var res = tx.executeSql("SELECT " + table + ".id as wid, " +
+                                                table + ".day as day," +
+                                               "exercises.id as eid, " +
+                                               "exercises.name as name, " +
+                                               "exercises.additional as info, " +
+                                                "exercises.dbname as exercisetable " +
+                                    "FROM " + table + " LEFT JOIN exercises " +
+                                    "WHERE " +
+                                        table + ".exercise = exercises.id " + // AND " +
+                                        //"exercise IS NOT NULL " +
+                                    "ORDER BY " + table + ".day, " + table + ".id;");
+            for ( var i = 0; i < res.rows.length; i++ ) {
+                var r = res.rows.item(i);
+                routine.append({"wid": r.wid, "day": r.day, "eid": r.eid, "exercise": r.name, "info": r.info, "exercisetable": r.exercisetable});
+                //console.log("Got: " + r.wid + ", " + r.day + ", " + r.eid + " and " + r.name);
             }
         }
     );
@@ -151,7 +228,8 @@ function getWorkoutContent(table, day, exercises) {
                                                 table + ".day as day," +
                                                "exercises.id as eid, " +
                                                "exercises.name as name, " +
-                                               "exercises.additional as info " +
+                                               "exercises.additional as info, " +
+                                               "exercises.dbname as exercisetable " +
                                     "FROM " + table + " LEFT JOIN exercises " +
                                     "WHERE " +
                                         table + ".exercise = exercises.id AND " +
@@ -160,7 +238,7 @@ function getWorkoutContent(table, day, exercises) {
                                     "ORDER BY " + table + ".id;");
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
-                exercises.append({"wid": r.wid, "day": r.day, "eid": r.eid, "exercise": r.name, "info": r.info});
+                exercises.append({"wid": r.wid, "day": r.day, "eid": r.eid, "exercise": r.name, "info": r.info, "exercisetable": r.exercisetable});
                 //console.log("Got: " + r.wid + ", " + r.day + ", " + r.eid + " and " + r.name);
             }
         }

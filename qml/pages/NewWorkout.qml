@@ -6,23 +6,27 @@ import "../Database.js" as DB
 Dialog {
     id: page
     property string dbname
-    acceptPending: true
-    acceptDestination: Qt.resolvedUrl("EditWorkout.qml")
-    acceptDestinationProperties: {dbname:page.dbname}
+    //acceptPending: true
+    //acceptDestination: Qt.resolvedUrl("EditWorkout.qml")
+    //acceptDestinationProperties: {dbname:page.dbname}
 
     onOpened: {
         DB.addDay(days);
     }
     onDone: {
         page.dbname = DB.newWorkout(name.text, info.text, days);
-        console.log("Check one");
-        //console.log(listView.children);
+    }
+    onRejected: {
+        days.clear()
+    }
+    onAccepted: {
+        pageStack.find( function(p) {
+            try { p.refresh(); } catch (e) {};
+            return false;
+        } );
     }
 
-    onRejected: model.clear()
-
     function getTable() {
-        console.log("Check three");
         return page.dbname;
     }
 
@@ -46,7 +50,7 @@ Dialog {
 
             anchors.top: header.bottom
             width: page.width
-            spacing: Theme.paddingLarge
+            //spacing: Theme.paddingLarge
 
             TextField {
                 id: name
@@ -114,6 +118,7 @@ Dialog {
                 }
             }
         }
+        VerticalScrollDecorator{}
     }
 }
 
