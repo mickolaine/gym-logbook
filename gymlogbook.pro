@@ -19,7 +19,6 @@ SOURCES += src/gymlogbook.cpp
 OTHER_FILES += qml/gymlogbook.qml \
     qml/cover/CoverPage.qml \
     qml/pages/FirstPage.qml \
-    rpm/gymlogbook.changes.in \
     rpm/gymlogbook.spec \
     rpm/gymlogbook.yaml \
     translations/*.ts \
@@ -36,7 +35,8 @@ OTHER_FILES += qml/gymlogbook.qml \
     qml/pages/EditDay.qml \
     qml/pages/SelectExercise.qml \
     qml/pages/ShowWorkout.qml \
-    gymlogbook.desktop
+    gymlogbook.desktop \
+    rpm/gymlogbook.changes
 
 # to disable building translations every time, comment out the
 # following CONFIG line

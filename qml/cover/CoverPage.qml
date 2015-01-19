@@ -35,7 +35,7 @@ CoverBackground {
     Label {
         id: label
         anchors.centerIn: parent
-        text: qsTr("GymLogbook")
+        text: qsTr("Gym Logbook")
     }
 
     CoverActionList {
