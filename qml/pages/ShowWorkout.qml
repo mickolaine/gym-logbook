@@ -5,11 +5,16 @@ import "../Database.js" as DB
 
 Page {
     property string dbname
+    property string name
+    property string info
     id: page
 
     function refresh() {
-        routine.clear()
-        DB.getWorkoutRoutine(page.dbname, routine)
+        routine.clear();
+        DB.getWorkoutRoutine(page.dbname, routine);
+        var data = DB.getWorkoutInfo(dbname);
+        name = data[0];
+        info = data[1];
     }
 
     SilicaListView {
@@ -25,7 +30,7 @@ Page {
         spacing: Theme.paddingMedium
 
         header: PageHeader {
-            title: "Workout routine"
+            title: page.name
         }
 
         model: ListModel {
@@ -78,6 +83,7 @@ Page {
                 text: info
                 x: Theme.paddingLarge
                 font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
                 wrapMode: Text.WordWrap
                 maximumLineCount: 2
                 truncationMode: TruncationMode.Fade

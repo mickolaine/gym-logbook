@@ -49,6 +49,25 @@ Page {
         DB.getExercise(exercise, tablename);
     }
 
+    function visibility() {
+        var weight = DB.getExerciseType(page.tablename);
+        if (weight === "Weight") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function unit() {
+        if (visibility()) {
+            return (" kg");
+        }
+        else {
+            return (" s");
+        }
+    }
+
     DatePicker {
         id: datepicker
         visible: false
@@ -76,15 +95,28 @@ Page {
         }
 
         Label {
-            id: key
+            id: key1
             x: Theme.paddingLarge
-            height: 50
+            height: 50 * visibility()
             anchors.top: info.bottom
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
             verticalAlignment: Text.AlignBottom
             text: qsTr("Date - sets x reps x weight")
+            visible: visibility()
 
+        }
+
+        Label {
+            id: key2
+            x: Theme.paddingLarge
+            height: 50 * !visibility()
+            anchors.top: key1.bottom
+            font.pixelSize: Theme.fontSizeExtraSmall
+            color: Theme.secondaryColor
+            verticalAlignment: Text.AlignBottom
+            text: qsTr("Date - sets x reps x time")
+            visible: !visibility()
         }
 
         PullDownMenu {
@@ -113,7 +145,7 @@ Page {
 
             width: parent.width - 2*Theme.paddingLarge
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: key.bottom
+            anchors.top: key2.bottom
             anchors.bottom: parent.bottom
             delegate: ListItem {
 
@@ -128,7 +160,7 @@ Page {
                 function parseContent() {
                     datepicker.date = new Date(model.year, model.month-1, model.day, 0, 0, 0);
                     line.text = datepicker.dateText + " - " + model.sets + " x " + model.reps + " x " +
-                                model.weight + " kg";
+                                model.data + unit();
                 }
                 function parseLocalNum(num) {
                     return +(num.replace(",", "."));

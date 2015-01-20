@@ -15,7 +15,7 @@ function open() {
       );
     }
   } catch (e) {
-    console.log("Could not open DB: " + e);
+    //console.log("Could not open DB: " + e);
   }
   return db;
 }
@@ -68,7 +68,7 @@ function updateDB() {
         }
     }
     catch(e) {
-        console.log("Failure in updating database: " + e);
+        //console.log("Failure in updating database: " + e);
 
     }
 }
@@ -116,7 +116,7 @@ function addExercise(table, day, exercise) {
             }
 
             var newId = maxId + 1;
-            console.log("New Id is " + newId);
+            //console.log("New Id is " + newId);
             tx.executeSql("INSERT INTO " + table + " VALUES(?, ?, ?);", [newId, day, exercise]);
         }
     );
@@ -245,6 +245,16 @@ function getWorkoutContent(table, day, exercises) {
     );
 }
 
+function getWorkoutInfo(dbname) {
+    return withDB(
+        function(tx){
+            var res = tx.executeSql("SELECT * from workouts WHERE dbname = '" + dbname + "';");
+            return [res.rows.item(0).name, res.rows.item(0).additional];
+        }
+
+    );
+}
+
 function getWorkoutlist(workouts) {
     withDB(
         function(tx) {
@@ -302,7 +312,7 @@ function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
             }
             var newId = maxId + 1;
             tx.executeSql("INSERT INTO "+ table + " VALUES(" + newId + ", " + year + ", " + month + ", " + day +
-                          ", " + sets + ", " + reps + ", " + seconds + ", '" + weight.replace(",", ".") + "', '" + status + "');");
+                          ", " + sets + ", " + reps + ", '" + seconds.replace(",", ".") + "', '" + weight.replace(",", ".") + "', '" + status + "');");
         }
     )
 
@@ -312,7 +322,7 @@ function updateSet(id, table, year, month, day, sets, reps, weight, seconds, sta
     withDB(
         function(tx) {
             tx.executeSql("UPDATE "+ table + " SET year=" + year + ", month=" + month + ", day=" + day +
-                          ", sets=" + sets + ", reps=" + reps + ", seconds=" + seconds + ", weight='" + weight.replace(",", ".") +
+                          ", sets=" + sets + ", reps=" + reps + ", seconds='" + seconds.replace(",", ".") + "', weight='" + weight.replace(",", ".") +
                           "', status='" + status + "' WHERE id=" + id +";");
         }
     )
@@ -350,12 +360,26 @@ function getExerciseInfo(name, id, info){
 function getExercise(list, tablename) {
     withDB(
         function(tx) {
+            var weight;
+            if (getExerciseType(tablename) === "Weight") {
+                weight = true;
+            }
+            else {
+                weight = false;
+            }
+
             var res = tx.executeSql("SELECT * FROM " + tablename + " ORDER BY year DESC, month DESC, day DESC;");
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
-                //print(r.weight)
-                list.append({"id": r.id, "year": r.year, "month": r.month, "day": r.day, "sets": r.sets, "reps":r.reps,
-                             "seconds":r.seconds, "weight":parseFloat(r.weight), "status":r.status});
+
+                if (weight) {
+                    list.append({"id": r.id, "year": r.year, "month": r.month, "day": r.day, "sets": r.sets, "reps":r.reps,
+                                 "seconds":parseFloat(r.seconds), "weight":parseFloat(r.weight), "status":r.status, "data":r.weight});
+                }
+                else {
+                    list.append({"id": r.id, "year": r.year, "month": r.month, "day": r.day, "sets": r.sets, "reps":r.reps,
+                                 "seconds":parseFloat(r.seconds), "weight":parseFloat(r.weight), "status":r.status, "data":r.seconds});
+                }
             }
 
         }
@@ -372,6 +396,15 @@ function getSet(table, id) {
     )
 }
 
+function getExerciseType(dbname) {
+    return withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT type FROM exercises where dbname = ?;", [dbname]);
+            return res.rows.item(0).type;
+        }
+    )
+}
+
 function changeStatus(table, id, status) {
     withDB(
         function(tx) {
@@ -379,7 +412,7 @@ function changeStatus(table, id, status) {
                 tx.executeSql("UPDATE " + table + " SET status = '" + status + "' WHERE id = " + id + ";");
             }
             catch(e) {
-                console.log(e);
+                //console.log(e);
             }
         }
 
@@ -427,7 +460,7 @@ function withDB(cb) {
             res = cb(tx);
         } );
     } catch (e) {
-        console.log("database transaction failed: " + e);
+        //console.log("database transaction failed: " + e);
     }
 
     return res;

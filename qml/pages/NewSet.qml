@@ -16,6 +16,16 @@ Dialog {
         visible: false
     }
 
+    function visibility() {
+        var weight = DB.getExerciseType(page.table);
+        if (weight === "Weight") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     function loadValues() {
 
         if (isNaN(page.id)) {
@@ -28,6 +38,7 @@ Dialog {
             datepicker.date = new Date(values[0], values[1]-1, values[2], 0, 0, 0);
             sets.text = values[3];
             reps.text = values[4];
+            time.text = values[5];
             weight.text = values[6];
             if (values[7] === "Done") {
                 status.currentIndex = 1;
@@ -41,10 +52,10 @@ Dialog {
 
     onAccepted: {
         if (isNaN(page.id)) {
-            DB.newSet(page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, 0, status.value);
+            DB.newSet(page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, time.text, status.value);
         }
         else {
-            DB.updateSet(page.id, page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, 0, status.value);
+            DB.updateSet(page.id, page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, time.text, status.value);
         }
         pageStack.find( function(p) {
             try { p.refresh(); } catch (e) {};
@@ -76,7 +87,6 @@ Dialog {
                 }
             }
 
-
             TextField {
                 id: datefield
                 width: 250
@@ -94,7 +104,6 @@ Dialog {
                     })
                 }
             }
-
 
             TextField {
                 id: sets
@@ -124,6 +133,18 @@ Dialog {
                 label: qsTr("Weight")
                 placeholderText: qsTr("Weight")
                 EnterKey.onClicked: parent.focus = true
+                visible: visibility()
+            }
+
+            TextField {
+                id: time
+                width: 250
+                x: Theme.paddingLarge
+                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                label: qsTr("Time")
+                placeholderText: qsTr("Time")
+                EnterKey.onClicked: parent.focus = true
+                visible: !visibility()
             }
 
             ComboBox {

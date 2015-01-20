@@ -85,7 +85,7 @@ Page {
             delegate: ListItem {
                 id: delegate
                 menu: contextMenu
-
+                contentHeight: line1.height + line2.height + 20
 
                 function remove() {
                     remorseAction("Deleting", function() {
@@ -104,13 +104,19 @@ Page {
                     id: line2
                     text: model.info
                     width: page.width - 2*Theme.paddingLarge
-                    x: Theme.paddingLarge
                     horizontalAlignment: Text.AlignLeft
                     truncationMode: TruncationMode.Fade
-
-                    anchors.top: line1.bottom
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: delegate.highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    x: Theme.paddingLarge
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    color: Theme.secondaryColor
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
+                    anchors {
+                        top: line1.bottom
+                        left: parent.left
+                        right: parent.right
+                        leftMargin: Theme.paddingLarge
+                    }
 
 
                 }

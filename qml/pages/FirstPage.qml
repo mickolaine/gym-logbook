@@ -11,13 +11,13 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                text: qsTr("New exercise")
-                onClicked: pageStack.push(Qt.resolvedUrl("NewExercise.qml"))
+                text: qsTr("About...")
+                onClicked: pageStack.push(Qt.resolvedUrl("About.qml"))
             }
-            MenuItem {
-                text: qsTr("New workout routine")
-                onClicked: pageStack.push(Qt.resolvedUrl("NewWorkout.qml"))
-            }
+            /*MenuItem {
+                text: qsTr("Settings")
+                onClicked: pageStack.push(Qt.resolvedUrl("Settings.qml"))
+            }*/
         }
 
         contentHeight: column.height

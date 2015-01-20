@@ -104,7 +104,7 @@ Page {
                         try {
                             p.addExercise(id);
                             p.refresh();
-                            console.log(id);
+                            //console.log(id);
                         } catch (e) {};
                     } );
 

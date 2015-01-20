@@ -50,11 +50,11 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: header.bottom
             anchors.bottom: parent.bottom
-            contentHeight: Theme.itemSizeMedium
+
             delegate: ListItem {
                 id: delegate
                 menu: contextMenu
-
+                contentHeight: line1.height + line2.height + 20
                 function remove() {
                     remorseAction("Deleting", function() {
                         if (DB.deleteExercise(model.id)) {
@@ -73,13 +73,19 @@ Page {
                     id: line2
                     text: model.info
                     width: page.width - 2*Theme.paddingLarge
-                    x: Theme.paddingLarge
                     horizontalAlignment: Text.AlignLeft
+                    x: Theme.paddingLarge
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    color: Theme.secondaryColor
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
                     truncationMode: TruncationMode.Fade
-
-                    anchors.top: line1.bottom
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: delegate.highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    anchors {
+                        top: line1.bottom
+                        left: parent.left
+                        right: parent.right
+                        leftMargin: Theme.paddingLarge
+                    }
 
                 }
 
