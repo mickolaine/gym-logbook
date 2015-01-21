@@ -16,8 +16,8 @@ Summary:    Gym Logbook
 Version:    0.2
 Release:    1
 Group:      Qt/Qt
-License:    LICENSE
-URL:        http://example.org/
+License:    GPL
+URL:        https://bitbucket.org/mikko_laine/gym-logbook
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  gymlogbook.yaml
 Requires:   sailfishsilica-qt5 >= 0.10.9
@@ -28,7 +28,7 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  desktop-file-utils
 
 %description
-Short description of my SailfishOS Application
+Small application to save your gym exercise progression
 
 
 %prep

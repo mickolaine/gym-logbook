@@ -120,14 +120,10 @@ Page {
         }
 
         PullDownMenu {
-            /*MenuItem {
-                text: "Delete All"
-                onClicked: remorse.execute( "Deleting All Entries",
-                                               function() {
-                                                   page.refresh();
-                                               }
-                                           )
-            }*/
+            MenuItem {
+                text: "Information"
+                onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseInfo.qml"), {table:page.tablename});}
+            }
             MenuItem {
                 text: "New set"
                 onClicked: {

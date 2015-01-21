@@ -38,7 +38,8 @@ OTHER_FILES += qml/gymlogbook.qml \
     gymlogbook.desktop \
     rpm/gymlogbook.changes \
     qml/pages/About.qml \
-    qml/pages/Settings.qml
+    qml/pages/Settings.qml \
+    qml/pages/ExerciseInfo.qml
 
 # to disable building translations every time, comment out the
 # following CONFIG line

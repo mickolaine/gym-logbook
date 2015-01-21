@@ -396,6 +396,40 @@ function getSet(table, id) {
     )
 }
 
+function get1RMSet(table) {
+    return withDB(
+        function(tx) {
+            var rm = 0;
+            var rmnew = 0;
+            var month;
+            var res = tx.executeSql("SELECT * FROM " + table + " WHERE status = 'Done' ORDER BY year DESC, month DESC, day DESC;");
+            for ( var i = 0; i < res.rows.length; i++ ) {
+                var r = res.rows.item(i);
+                //console.log(parseFloat(r.weight));
+                //console.log(parseFloat(r.reps));
+
+                if (i === 0) {
+                    month = r.month;
+                }
+
+                if (month !== r.month) {
+                    break;
+                }
+
+                rmnew = r.weight * (36/(37-r.reps));
+                //rmnew = parseFloat(r.weight) * (1.0 + parseFloat(r.reps)/30.0);
+                //console.log(rmnew);
+                if (rmnew > rm) {
+                    rm = rmnew;
+                }
+
+            }
+            return rm.toFixed(1);
+        }
+
+    );
+}
+
 function getExerciseType(dbname) {
     return withDB(
         function(tx) {
