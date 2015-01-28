@@ -299,6 +299,38 @@ function newExercise(name, additional, type, tablename) {
     );
 }
 
+function updateExercise(name, additional, type, tablename) {
+    // If tablename is set, this updates the table in question. Otherwise creates a new one.
+    withDB(
+        function(tx) {
+            console.log(tablename);
+            if (tablename) {
+                tx.executeSql("UPDATE exercises SET name = '" + name +
+                                                "', additional = '" + additional +
+                                                "', type = '" + type +
+                              "' WHERE dbname = '" + tablename + "';");
+                return;
+            }
+
+            try {
+                var result = tx.executeSql("SELECT max(id) FROM exercises;");
+                //print(result.rows.item(0)["max(id)"]);
+                var newId = result.rows.item(0)["max(id)"];
+
+            }
+            catch(e) {
+                var newId = 0;
+            }
+            var newId = newId + 1;
+            var dbname = "e_" + name.toLowerCase().replace(/[^a-z-]/g,"") + "_" + newId;
+            tx.executeSql("CREATE TABLE IF NOT EXISTS " + dbname +
+                          "(id INTEGER UNIQUE, year INTEGER, month INTEGER, day INTEGER, " +
+                          "sets INTEGER, reps INTEGER, seconds REAL, weight REAL, status INTEGER);");
+            tx.executeSql("INSERT INTO exercises VALUES(?, ?, ?, ?, ?);", [newId, name, additional, type, dbname]);
+        }
+    );
+}
+
 function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
     withDB(
         function(tx) {
@@ -348,11 +380,20 @@ function getExercises(list) {
     )
 }
 
-function getExerciseInfo(name, id, info){
+/*function getExerciseInfo(name, id, info){
     withDB(
         function(tx) {
-            var res = tx.executeSql("SELECT additional FROM exercises where id = ?;",[id]);
-            info = res.rows.item(0).additional;
+            var res = tx.executeSql("SELECT name, additional, type FROM exercises where id = ?;",[id]);
+            info = [res.rows.item(0).name, res.rows.item(0).additional, res.rows.item(0).type];
+        }
+    )
+}*/
+
+function getExerciseByTable(table){
+    return withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT name, additional, type FROM exercises where dbname = ?;",[table]);
+            return [res.rows.item(0).name, res.rows.item(0).additional, res.rows.item(0).type];
         }
     )
 }
@@ -396,13 +437,15 @@ function getSet(table, id) {
     )
 }
 
-function get1RMSet(table) {
+function get1RMSet(table, alltime) {
     return withDB(
         function(tx) {
             var rm = 0;
             var rmnew = 0;
             var month;
+            var year;
             var res = tx.executeSql("SELECT * FROM " + table + " WHERE status = 'Done' ORDER BY year DESC, month DESC, day DESC;");
+
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
                 //console.log(parseFloat(r.weight));
@@ -410,10 +453,13 @@ function get1RMSet(table) {
 
                 if (i === 0) {
                     month = r.month;
+                    year = r.year;
                 }
 
-                if (month !== r.month) {
-                    break;
+                if ((month < r.month) | (year < r.year)){
+                    if (!alltime) {
+                        break;
+                    }
                 }
 
                 rmnew = r.weight * (36/(37-r.reps));

@@ -47,12 +47,28 @@ Page {
 
             Label {
                 x: Theme.paddingLarge
-                text: DB.get1RMSet(page.table) + " kg"
+                text: DB.get1RMSet(page.table, false) + " kg"
                 width: parent.width - 2*Theme.paddingLarge
                 font.pixelSize: Theme.fontSizeExtraLarge
                 horizontalAlignment: Text.AlignRight
             }
 
+            Label {
+                x: Theme.paddingLarge
+                text: qsTr("All time maximum. This ignores time and calculates the best value ever.")
+                wrapMode: Text.WordWrap
+                maximumLineCount: 5
+                width: parent.width - 2*Theme.paddingLarge
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+            }
+            Label {
+                x: Theme.paddingLarge
+                text: DB.get1RMSet(page.table, true) + " kg"
+                width: parent.width - 2*Theme.paddingLarge
+                font.pixelSize: Theme.fontSizeExtraSmall
+                horizontalAlignment: Text.AlignRight
+            }
 
         }
 

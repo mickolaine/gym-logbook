@@ -47,6 +47,9 @@ Page {
     function refresh() {
         exercise.clear();
         DB.getExercise(exercise, tablename);
+        var data = DB.getExerciseByTable(tablename);
+        header.title = data[0];
+        info.text = data[1];
     }
 
     function visibility() {
@@ -121,11 +124,17 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                text: "Information"
+                text: qsTr("Information")
                 onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseInfo.qml"), {table:page.tablename});}
             }
             MenuItem {
-                text: "New set"
+                text: qsTr("Edit exercise")
+                onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseEdit.qml"), {table:page.tablename});}
+                //onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseEdit.qml"))}
+            }
+
+            MenuItem {
+                text: qsTr("New set")
                 onClicked: {
                     pageStack.push(Qt.resolvedUrl("NewSet.qml"), {table:page.tablename});
                     page.refresh();
