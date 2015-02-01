@@ -303,7 +303,6 @@ function updateExercise(name, additional, type, tablename) {
     // If tablename is set, this updates the table in question. Otherwise creates a new one.
     withDB(
         function(tx) {
-            console.log(tablename);
             if (tablename) {
                 tx.executeSql("UPDATE exercises SET name = '" + name +
                                                 "', additional = '" + additional +
@@ -337,14 +336,21 @@ function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
             try {
                 var result = tx.executeSql("SELECT max(id) FROM " + table + ";");
                 var maxId = result.rows.item(0)["max(id)"];
-
             }
             catch(e) {
                 var maxId = 0;
             }
+
             var newId = maxId + 1;
-            tx.executeSql("INSERT INTO "+ table + " VALUES(" + newId + ", " + year + ", " + month + ", " + day +
+            try {
+                console.log("INSERT INTO "+ table + " VALUES(" + newId + ", " + year + ", " + month + ", " + day +
+                        ", " + sets + ", " + reps + ", '" + seconds.replace(",", ".") + "', '" + weight.replace(",", ".") + "', '" + status + "');");
+                tx.executeSql("INSERT INTO "+ table + " VALUES(" + newId + ", " + year + ", " + month + ", " + day +
                           ", " + sets + ", " + reps + ", '" + seconds.replace(",", ".") + "', '" + weight.replace(",", ".") + "', '" + status + "');");
+            }
+            catch(e) {
+                console.log(e);
+            }
         }
     )
 

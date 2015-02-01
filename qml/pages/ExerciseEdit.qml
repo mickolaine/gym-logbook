@@ -6,7 +6,6 @@ import "../Database.js" as DB
 Dialog {
     id: page
     property string table
-    property string testi
     property string name
     property string info
     property string type
@@ -25,7 +24,6 @@ Dialog {
     }
 
     onAccepted: {
-        console.log(info.text);
         DB.updateExercise(name.text, info.text, type.value, page.table);
         pageStack.find( function(p) {
             try { p.refresh(); } catch (e) {};

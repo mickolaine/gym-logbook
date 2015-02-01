@@ -132,6 +132,10 @@ Page {
                 onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseEdit.qml"), {table:page.tablename});}
                 //onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseEdit.qml"))}
             }
+            MenuItem {
+                text: qsTr("Progression")
+                onClicked: {pageStack.push(Qt.resolvedUrl("Progression.qml"), {table:page.tablename});}
+            }
 
             MenuItem {
                 text: qsTr("New set")
@@ -185,27 +189,28 @@ Page {
                     }
                 }
 
+                /*
                 BackgroundItem {
                     id: bg1
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width - bg2.width
-
+*/
                     Label {
                         id: line
                         anchors.verticalCenter: parent.verticalCenter
                         color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
                         Component.onCompleted: parseContent()
                         truncationMode: TruncationMode.Fade
-                    }
+                    }/*
                     onClicked: {
                         pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id});
                         page.refresh();
                     }
-                }
+                }*/
                 BackgroundItem {
                     id: bg2
                     width: 125
-                    anchors.left: bg1.right
+                    anchors.left: line.right
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
 
@@ -221,8 +226,6 @@ Page {
                     }
                     onClicked: changeStatus()
                 }
-
-
 
                 Component {
                     id: contextMenu

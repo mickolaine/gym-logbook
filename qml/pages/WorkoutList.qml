@@ -82,6 +82,7 @@ Page {
             anchors.top: header.bottom
             anchors.bottom: parent.bottom
             contentHeight: Theme.itemSizeMedium
+
             delegate: ListItem {
                 id: delegate
                 menu: contextMenu

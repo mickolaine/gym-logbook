@@ -42,25 +42,9 @@ Dialog {
 
         anchors.fill: parent
 
-        /*PullDownMenu {
-            MenuItem {
-                text: "Delete All"
-                onClicked: remorse.execute( "Deleting All Entries",
-                                               function() {
-                                                   DB.clear();
-                                                   page.refresh()
-                                               }
-                                           )
-            }
-            MenuItem {
-                text: "New exercise"
-                onClicked: pageStack.push(Qt.resolvedUrl("NewExercise.qml"))
-            }
-        }*/
-
         Label {
             id: label
-            text: qsTr("Select workout to edit:")
+            text: qsTr("Select day to edit:")
             anchors.top: header.bottom
             x: Theme.paddingLarge
             width: parent.width

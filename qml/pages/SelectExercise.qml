@@ -58,7 +58,7 @@ Page {
         PullDownMenu {
             MenuItem {
                 text: "New exercise"
-                onClicked: pageStack.push(Qt.resolvedUrl("NewExercise.qml"))
+                onClicked: pageStack.push(Qt.resolvedUrl("ExerciseEdit.qml"))
             }
         }
 
