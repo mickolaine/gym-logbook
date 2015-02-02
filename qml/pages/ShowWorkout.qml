@@ -38,11 +38,11 @@ Page {
         }
 
         section {
-            property: 'section'
-
+            property: 'day'
             delegate: SectionHeader {
                 text: day
-                height: Theme.itemSizeExtraSmall
+                height: Theme.itemSizeSmall
+
             }
         }
 
@@ -66,6 +66,7 @@ Page {
                     leftMargin: Theme.paddingLarge
                 }
             }
+            /*
             Label {
                 id: date
                 text: day
@@ -77,7 +78,8 @@ Page {
                     baseline: origin.baseline
                     rightMargin: Theme.paddingSmall
                 }
-            }
+            }*/
+
             Label {
                 id: body
                 text: info
@@ -95,10 +97,9 @@ Page {
                 }
             }
             onClicked: {pageStack.push(Qt.resolvedUrl("Exercise.qml"), {name:exercise,id:eid,info:info,tablename:exercisetable})}
-
         }
-        Component.onCompleted: {
+    }
+    Component.onCompleted: {
         refresh();
-       }
     }
 }

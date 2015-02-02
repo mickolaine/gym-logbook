@@ -90,7 +90,8 @@ Page {
             x: Theme.paddingLarge
             anchors.top: header.bottom
             text: page.info
-            color: Theme.primaryColor
+            color: Theme.secondaryColor
+            font.pixelSize: Theme.fontSizeSmall
             width: page.width - 2*Theme.paddingLarge
             maximumLineCount: 10
             wrapMode: Text.WordWrap
@@ -103,7 +104,7 @@ Page {
             height: 50 * visibility()
             anchors.top: info.bottom
             font.pixelSize: Theme.fontSizeExtraSmall
-            color: Theme.secondaryColor
+            color: Theme.primaryColor
             verticalAlignment: Text.AlignBottom
             text: qsTr("Date - sets x reps x weight")
             visible: visibility()
@@ -116,7 +117,7 @@ Page {
             height: 50 * !visibility()
             anchors.top: key1.bottom
             font.pixelSize: Theme.fontSizeExtraSmall
-            color: Theme.secondaryColor
+            color: Theme.primaryColor
             verticalAlignment: Text.AlignBottom
             text: qsTr("Date - sets x reps x time")
             visible: !visibility()
@@ -156,6 +157,9 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: key2.bottom
             anchors.bottom: parent.bottom
+            spacing: Theme.paddingLarge
+
+
             delegate: ListItem {
 
                 id: delegate
@@ -168,9 +172,15 @@ Page {
 
                 function parseContent() {
                     datepicker.date = new Date(model.year, model.month-1, model.day, 0, 0, 0);
-                    line.text = datepicker.dateText + " - " + model.sets + " x " + model.reps + " x " +
+                    line.text = "I         - " + model.sets + " x " + model.reps + " x " +
                                 model.data + unit();
                 }
+                function parseDate() {
+                    datepicker.date = new Date(model.year, model.month-1, model.day, 0, 0, 0);
+                    date.text = datepicker.dateText;
+
+                }
+
                 function parseLocalNum(num) {
                     return +(num.replace(",", "."));
                 }
@@ -188,31 +198,28 @@ Page {
                         DB.changeStatus(page.tablename, model.id, "Not done");
                     }
                 }
-
-                /*
-                BackgroundItem {
-                    id: bg1
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - bg2.width
-*/
-                    Label {
-                        id: line
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
-                        Component.onCompleted: parseContent()
-                        truncationMode: TruncationMode.Fade
-                    }/*
-                    onClicked: {
-                        pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id});
-                        page.refresh();
-                    }
+                /*function dateVisible() {
+                    if (model.currentIndex - 1)
                 }*/
+
+                Label {
+                    id: date
+                    //anchors.verticalCenter: parent.top
+                    color: delegate.highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    Component.onCompleted: parseDate()
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    visible: dateVisible()
+                }
+
                 BackgroundItem {
                     id: bg2
                     width: 125
-                    anchors.left: line.right
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
+                    anchors {
+                        //left: weight.right
+                        right: parent.right
+                        top: date.bottom
+                        bottom: parent.bottom
+                    }
 
                     Label {
                         id: lineEnd
@@ -220,11 +227,63 @@ Page {
 
                         horizontalAlignment: Text.AlignRight
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
+                        anchors.left: parent.left
 
                         color: delegate.highlighted ? Theme.highlightColor : Theme.secondaryColor
                     }
                     onClicked: changeStatus()
+                }
+
+                Label {
+                    id: sets
+                    color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
+                    text: model.sets
+                    font.pixelSize: Theme.fontSizeLarge
+                    anchors {
+                        top: date.bottom
+                        //left: bg2.right
+                    }
+                }
+                Label {
+                    id: replabel
+                    color: delegate.highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeSmall
+                    text: qsTr(" x ")
+                    anchors {
+                        bottom: parent.bottom
+                        left: sets.right
+                    }
+                }
+                Label {
+                    id: reps
+                    color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
+                    text: model.reps
+                    font.pixelSize: Theme.fontSizeLarge
+                    anchors {
+                        top: date.bottom
+                        left: replabel.right
+                    }
+                }
+                Label {
+                    id: weightlabel
+                    color: delegate.highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeSmall
+                    text: " @ "
+                    anchors {
+                        bottom: parent.bottom
+                        left: reps.right
+                    }
+                }
+
+                Label {
+                    id: weight
+                    color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
+                    text: model.data + unit()
+                    font.pixelSize: Theme.fontSizeLarge
+                    anchors {
+                        top: date.bottom
+                        left: weightlabel.right
+                    }
                 }
 
                 Component {
