@@ -3,8 +3,8 @@ Type=Application
 X-Nemo-Application-Type=silica-qt5
 Icon=gymlogbook
 Exec=gymlogbook
-Name=gymlogbook
+Name=Gym Logbook
 # translation example:
-# your app name in German locale (de)
-#Name[de]=SailGLog
+
+Name[fi]=gymlogbook
 

@@ -35,7 +35,11 @@ import "../Database.js" as DB
 
 Page {
     id: page
+    //property string name
     property string eid
+    //property string info
+    //property string tablename
+    //property bool future
 
     ListModel {
         id: exercise
@@ -43,25 +47,32 @@ Page {
 
     function refresh() {
         exercise.clear();
+        var future = true;
+        print("Eka");
         DB.getExerciseData(exercise, eid, true);
+        print("Toka");
         var data = DB.getExerciseByEID(eid);
+        print("Kolmas");
         header.title = data.name;
         info.text = data.additional;
+        print("Neljäs");
         refresh1rm();
+        print("Viides");
     }
 
     function refresh1rm() {
-        onermlabel.text = "1RM: " + DB.get1RMSet(page.eid, true) + " kg";
+        onermlabel.text = "1RM: " + DB.get1RMSet(page.tablename, true) + " kg";
     }
 
     function visibility() {
-        var data = DB.getExerciseByEID(eid);
-        if (data.type === "Weight") {
+        return true; /*
+        var weight = DB.getExerciseType(page.tablename);
+        if (weight === "Weight") {
             return true;
         }
         else {
             return false;
-        }
+        }*/
     }
 
     function isExercisePage() {
@@ -139,7 +150,7 @@ Page {
         Label {
             id: onermlabel
             x: Theme.paddingLarge
-            text: "1RM: " + DB.get1RMSet(page.eid, true) + " kg"
+            text: "1RM: " + DB.get1RMSet(page.tablename, true) + " kg"
             width: parent.width - 2*Theme.paddingLarge
             font.pixelSize: Theme.fontSizeExtraSmall
             horizontalAlignment: Text.AlignRight
@@ -150,7 +161,12 @@ Page {
         PullDownMenu {
             MenuItem {
                 text: qsTr("Edit exercise")
-                onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseEdit.qml"), {eid:page.eid});}
+                onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseEdit.qml"), {table:page.tablename});}
+                //onClicked: {pageStack.push(Qt.resolvedUrl("ExerciseEdit.qml"))}
+            }
+            MenuItem {
+                text: qsTr("Plan progression")
+                onClicked: {pageStack.push(Qt.resolvedUrl("Progression.qml"), {table:page.tablename});}
             }
             MenuItem {
                 id: showfuture
@@ -186,7 +202,6 @@ Page {
 
         RemorsePopup { id: remorse }
 
-
         SilicaListView {
             id: listView
             model: exercise
@@ -211,10 +226,12 @@ Page {
                 }
 
                 function parseContent() {
-                    line.text = "I         - " + model.sets + " x " + model.reps + " x " + model.data + unit();
+                    datepicker.date = model.date
+                    line.text = "I         - " + model.sets + " x " + model.reps + " x " +
+                                model.data + unit();
                 }
                 function parseDate() {
-                    datepicker.date = new Date(model.date);
+                    datepicker.date = new Date(model.year, model.month-1, model.day, 0, 0, 0);
                     date.text = datepicker.dateText;
 
                 }
@@ -225,19 +242,18 @@ Page {
                 function changeStatus() {
                     if (lineEnd.text == "Not done") {
                         lineEnd.text = "Done";
-                        DB.changeStatus(model.id, "Done");
+                        DB.changeStatus(page.tablename, model.id, "Done");
                     }
                     else if (lineEnd.text == "Done") {
                         lineEnd.text = "Fail";
-                        DB.changeStatus(model.id, "Fail");
+                        DB.changeStatus(page.tablename, model.id, "Fail");
                     }
                     else if (lineEnd.text == "Fail") {
                         lineEnd.text = "Not done";
-                        DB.changeStatus(model.id, "Not done");
+                        DB.changeStatus(page.tablename, model.id, "Not done");
                     }
                     refresh1rm()
                 }
-
 
                 Label {
                     id: date
@@ -248,7 +264,6 @@ Page {
                     anchors.right: parent.right
                     //visible: dateVisible()
                 }
-
 
                 BackgroundItem {
                     id: bg2
@@ -279,7 +294,9 @@ Page {
                     text: model.sets
                     font.pixelSize: Theme.fontSizeLarge
                     anchors {
+                        //top: date.bottom
                         verticalCenter:parent.verticalCenter
+                        //left: bg2.right
                     }
                 }
                 Label {
@@ -298,6 +315,7 @@ Page {
                     text: model.reps
                     font.pixelSize: Theme.fontSizeLarge
                     anchors {
+                        //top: date.bottom
                         verticalCenter:parent.verticalCenter
                         left: replabel.right
                     }
@@ -316,34 +334,21 @@ Page {
                 Label {
                     id: weight
                     color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
-                    text: model.weight + " kg"
+                    text: model.data + unit()
                     font.pixelSize: Theme.fontSizeLarge
                     anchors {
+                        //top: date.bottom
                         verticalCenter:parent.verticalCenter
                         left: weightlabel.right
                     }
-                    visible: visibility()
                 }
-
-                Label {
-                    id: time
-                    color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
-                    text: model.time + " s"
-                    font.pixelSize: Theme.fontSizeLarge
-                    anchors {
-                        verticalCenter:parent.verticalCenter
-                        left: weightlabel.right
-                    }
-                    visible: !visibility()
-                }
-
 
                 Component {
                     id: contextMenu
                     ContextMenu {
                         MenuItem {
                             text: "Modify"
-                            onClicked: {pageStack.push(Qt.resolvedUrl("NewSet.qml"),{sid:model.id}); page.refresh();}
+                            onClicked: {pageStack.push(Qt.resolvedUrl("NewSet.qml"),{table:page.tablename,id:model.id}); page.refresh();}
                         }
                         MenuItem {
                             text: "Remove"
@@ -354,7 +359,6 @@ Page {
             }
             VerticalScrollDecorator {}
         }
-
         Component.onCompleted: page.refresh()
     }
 }

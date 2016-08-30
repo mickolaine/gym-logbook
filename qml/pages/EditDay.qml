@@ -61,6 +61,13 @@ Dialog {
                 id: delegate
                 menu: contextMenu
 
+                function remove() {
+                    remorseAction("Deleting", function() {
+                        DB.removeExercise(page.dbname, model.wid);
+                        exercises.remove(index);
+                    })
+                }
+
                 Label {
                     id: line1
                     x: Theme.paddingLarge
@@ -103,10 +110,8 @@ Dialog {
                         }
                         MenuItem {
                             text: "Remove"
-                            onClicked: {
-                                DB.removeExercise(page.dbname, model.wid);
-                                refresh();
-                            }
+                            onClicked: remove()
+
                         }
                     }
                 }

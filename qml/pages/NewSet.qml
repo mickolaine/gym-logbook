@@ -5,10 +5,9 @@ import "../Database.js" as DB
 
 Dialog {
     id: page
-    property string table
-    property string type
 
-    property string id
+    property string sid
+    property string eid
 
 
     DatePicker {
@@ -17,7 +16,7 @@ Dialog {
     }
 
     function visibility() {
-        var weight = DB.getExerciseType(page.table);
+        var weight = DB.getExerciseType(eid);
         if (weight === "Weight") {
             return true;
         }
@@ -28,34 +27,37 @@ Dialog {
 
     function loadValues() {
 
-        if (isNaN(page.id)) {
+        if (page.sid === "") { }
 
-        }
         else {
+            var values = DB.getSetData(page.sid);
 
-            var values = DB.getSet(page.table, page.id);
+            datepicker.date = new Date(values.date);
+            sets.text = values.sets;
+            reps.text = values.reps;
 
-            datepicker.date = new Date(values[0], values[1]-1, values[2], 0, 0, 0);
-            sets.text = values[3];
-            reps.text = values[4];
-            time.text = values[5];
-            weight.text = values[6];
-            if (values[7] === "Done") {
+            if (values.time) {
+                time.text = values.time;
+            }
+            if (values.weight) {
+                weight.text = values.weight;
+            }
+            if (values.status === "Done") {
                 status.currentIndex = 1;
-            } else if (values[7] === "Not done") {
+            } else if (values.status === "Not done") {
                 status.currentIndex = 0;
-            } else if (values[7] === "Fail") {
+            } else if (values.status === "Fail") {
                 status.currentIndex = 2;
             }
         }
     }
 
     onAccepted: {
-        if (isNaN(page.id)) {
-            DB.newSet(page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, time.text, status.value);
+        if (page.sid === "") {
+            DB.newSet(page.eid, datepicker.date, sets.text, reps.text, weight.text, time.text, status.value);
         }
         else {
-            DB.updateSet(page.id, page.table, datepicker.year, datepicker.month, datepicker.day, sets.text, reps.text, weight.text, time.text, status.value);
+            DB.updateSet(page.sid, datepicker.date, sets.text, reps.text, weight.text, time.text, status.value);
         }
         pageStack.find( function(p) {
             try { p.refresh(); } catch (e) {};

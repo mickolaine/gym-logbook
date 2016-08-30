@@ -9,16 +9,10 @@ Page {
     property string info
     id: page
 
-    function refresh() {
-        routine.clear();
-        DB.getWorkoutRoutine(page.dbname, routine);
-        var data = DB.getWorkoutInfo(dbname);
-        name = data[0];
-        info = data[1];
-    }
+
 
     SilicaListView {
-
+        id: listview
         PullDownMenu {
             MenuItem {
                 text: "Edit workout"
@@ -34,7 +28,7 @@ Page {
         }
 
         model: ListModel {
-            id: routine
+            //id: routine
         }
 
         section {
@@ -42,16 +36,21 @@ Page {
             delegate: SectionHeader {
                 text: day
                 height: Theme.itemSizeSmall
-
             }
         }
 
+        function refresh() {
+            model.clear();
+            DB.getWorkoutRoutine(page.dbname, model);
+            var data = DB.getWorkoutInfo(dbname);
+            name = data[0];
+            info = data[1];
+        }
         VerticalScrollDecorator {}
 
         delegate: ListItem {
-            //x: Theme.paddingLarge
-            contentWidth: parent.width //- 2*Theme.paddingLarge
-            //height: childrenRect.height + 20
+
+            contentWidth: parent.width
             contentHeight: origin.height + body.height + 20
 
             Label {
@@ -66,7 +65,7 @@ Page {
                     leftMargin: Theme.paddingLarge
                 }
             }
-            /*
+
             Label {
                 id: date
                 text: day
@@ -78,7 +77,7 @@ Page {
                     baseline: origin.baseline
                     rightMargin: Theme.paddingSmall
                 }
-            }*/
+            }
 
             Label {
                 id: body
@@ -100,6 +99,6 @@ Page {
         }
     }
     Component.onCompleted: {
-        refresh();
+        listview.refresh();
     }
 }

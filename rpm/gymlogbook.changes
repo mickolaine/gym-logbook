@@ -8,6 +8,12 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Thu Jan 7 2016 Mikko Laine <mikko.laine@gmail.com> 0.39-1
+- Rewrite of user interface
+- Redesign of database
+- Should save all the exercise data
+- Program now consentrates on exercises instead of routines, but routines will be available on version 0.4. Probably
+
 * Mon Jan 19 2015 Mikko Laine <mikko.laine@gmail.com> 0.2-1
 - Workout routines working, needs cleanup
 - Exercises working, needs cleanup

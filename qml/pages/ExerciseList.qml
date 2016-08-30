@@ -55,12 +55,12 @@ Page {
                 id: delegate
                 menu: contextMenu
                 contentHeight: line1.height + line2.height + 20
+
                 function remove() {
                     remorseAction("Deleting", function() {
-                        if (DB.deleteExercise(model.id)) {
-                            page.refresh();
-                           }
-                        })
+                        DB.deleteExercise(model.id);
+                        exercise.remove(index);
+                    })
                 }
 
                 Label {

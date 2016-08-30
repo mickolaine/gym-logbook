@@ -44,6 +44,16 @@ Page {
             }
 
             Label {
+                id: version
+                x: Theme.paddingLarge
+                width: parent.width - 2*Theme.paddingLarge
+                text: "version 0.39"
+                font.pixelSize: Theme.fontSizeMedium
+                color: Theme.secondaryColor
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            Label {
                 id: content
                 x: Theme.paddingLarge
                 width: parent.width - 2*Theme.paddingLarge

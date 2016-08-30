@@ -25,7 +25,6 @@ OTHER_FILES += qml/gymlogbook.qml \
     qml/Database.js \
     qml/pages/NewSet.qml \
     Readme.md \
-    qml/pages/Exercise.qml \
     qml/pages/ExerciseList.qml \
     qml/pages/NewExercise.qml \
     qml/pages/NewWorkout.qml \
@@ -47,5 +46,12 @@ OTHER_FILES += qml/gymlogbook.qml \
 # to disable building translations every time, comment out the
 # following CONFIG line
 #CONFIG += sailfishapp_i18n
-#TRANSLATIONS += translations/gymlogbook-de.ts
+#TRANSLATIONS += translations/gymlogbook-fi.ts
+
+DISTFILES += \
+    qml/pages/Main.qml \
+    qml/pages/Calculators.qml \
+    qml/pages/Wendler.qml \
+    qml/pages/Exercise_old.qml \
+    qml/pages/Exercise.qml
 

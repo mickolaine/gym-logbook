@@ -91,8 +91,8 @@ Page {
                 function remove() {
                     remorseAction("Deleting", function() {
                         DB.deleteWorkout(model.id);
-                        page.refresh();
-                    });
+                        workouts.remove(index);
+                    })
                 }
 
                 Label {

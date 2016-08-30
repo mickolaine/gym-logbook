@@ -10,7 +10,7 @@ Dialog {
     property string info
     property string type
     property string onerm
-    property string progression
+    property int progression
     property string date
     property string days
     property variant linear
@@ -25,7 +25,23 @@ Dialog {
             DB.newSet(page.table, line.year, line.month, line.day, line.sets, line.reps, line.weight.toString(), "0", "Not done");
         }
         pageStack.find( function(p) {
-            try { p.refresh(); } catch (e) {};
+            try {
+                if (p.isExercisePage()) {
+                    p.refresh();
+                    p.future = true;
+                    return true;
+                }
+            }
+            catch (e) {};
+            return false;
+        } );
+    }
+
+    acceptDestinationAction: PageStackAction.Pop
+    acceptDestination: {
+        pageStack.find( function(p) {
+            try {return p.isExercisePage()}
+            catch (e) {};
             return false;
         } );
     }
@@ -91,10 +107,34 @@ Dialog {
 
     Component.onCompleted: {
         datepicker.date = page.date;
-
-        calculateWendler(onerm);
+        console.log(progression);
+        if (progression === 0) {
+            calculateWendler(onerm);
+        }
+        else if (progression === 1) {
+            calculateLinear(onerm, linear[0], linear[1]);
+        }
     }
 
+    function calculateLinear(w0, s, r) {
+        var n = 8; // number of sets to generate
+        var weight = parseFloat(w0);
+        var set = parseFloat(s);
+        var rep = parseFloat(r);
+        for (var i = 0; i < n; i++) {
+            console.log(sets + " " + reps + " " + weight)
+            sets.append({"year": datepicker.year, "month": datepicker.month, "day": datepicker.day,
+                         "sets": set, "reps": rep, "weight": weight});
+
+            weight += 2.5;
+
+            var myDate = new Date(datepicker.year, datepicker.month-1, datepicker.day);
+
+            myDate.setDate(myDate.getDate() + parseInt(page.days));
+            datepicker.date = myDate;
+        }
+
+    }
 
     function calculateWendler(one) {
         var table = [];
@@ -128,12 +168,9 @@ Dialog {
                                   "sets": 1, "reps": reps, "weight": table[i][j]});
             }
             var myDate = new Date(datepicker.year, datepicker.month-1, datepicker.day);
-            console.log(page.days);
-            console.log(myDate.getDate());
+
             myDate.setDate(myDate.getDate() + parseInt(page.days));
             datepicker.date = myDate;
-
-            console.log(datepicker.year + " - " + datepicker.month + " - " + datepicker.day);
         }
     }
 }

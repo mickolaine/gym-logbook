@@ -67,7 +67,7 @@ Dialog {
             TextField {
                 id: onermvalue
                 text: DB.get1RMSet(page.table, false)
-                label: "Weight to use in calculations"
+                label: qsTr("Weight to use in calculations")
                 x: Theme.paddingLarge
                 width: parent.width - 2*Theme.paddingLarge
                 font.pixelSize: Theme.fontSizeExtraLarge
@@ -79,10 +79,10 @@ Dialog {
                 id: progression
                 //x: Theme.paddingLarge
                 width: 480
-                label: "Progression:"
+                label: qsTr("Progression:")
                 menu: ContextMenu {
-                    MenuItem { text: "Wendler 5/3/1" }
-                    MenuItem { text: "Linear" }
+                    MenuItem { text: qsTr("Wendler 5/3/1") }
+                    MenuItem { text: qsTr("Linear") }
                 }
                 onCurrentIndexChanged: {
                     if (currentIndex === 1) {
@@ -103,6 +103,7 @@ Dialog {
                     id: sets
                     placeholderText: qsTr("Sets")
                     label: qsTr("Sets")
+                    text: "3"
                     //x: Theme.paddingLarge
                     //width: parent.width - 2*Theme.paddingLarge
                     inputMethodHints: Qt.ImhFormattedNumbersOnly
@@ -114,6 +115,7 @@ Dialog {
                     id: reps
                     placeholderText: qsTr("Reps")
                     label: qsTr("Reps")
+                    text: "5"
                     //x: Theme.paddingLarge
                     //width: parent.width - 2*Theme.paddingLarge
                     inputMethodHints: Qt.ImhFormattedNumbersOnly
@@ -123,7 +125,7 @@ Dialog {
             }
             TextSwitch {
                 id: wendlerswitch
-                text: "Only last sets for each day"
+                text: qsTr("Only last sets for each day")
                 checked: false
                 visible: true
             }
@@ -180,18 +182,7 @@ Dialog {
                     color: Theme.secondaryColor
                 }
             }
-            /*
-            Button {
-                text: qsTr("Calculate")
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: {pageStack.push(Qt.resolvedUrl("Progression2.qml"), {table:page.table,
-                                                                                onerm:onermvalue.text,
-                                                                                progression:progression.currentIndex,
-                                                                                date:datepicker.date,
-                                                                                days:days.text,
-                                                                                linear:[sets.text, reps.text],
-                                                                                wendler:[wendlerswitch.checked]})}
-            }*/
+
         }
     }
 }

@@ -9,22 +9,26 @@ Dialog {
     property string name
     property string info
     property string type
+    property int eid
 
     onOpened: {
-        if (page.table !== ""){
-            var data = DB.getExerciseByTable(table);
-            name.text = data[0];
-            info.text = data[1];
-            if (data[2] === "Weight") {
+        print(page.eid);
+        print(isNaN(page.eid));
+
+        if (page.eid !== ""){
+            var data = DB.getExerciseByEID(eid);
+            name.text = data.name;
+            info.text = data.additional;
+            if (data.type === "Weight") {
                 type.currentIndex = 0;
-            } else if (data[2] === "Time") {
+            } else if (data.type === "Time") {
                 type.currentIndex = 1;
             }
         }
     }
 
     onAccepted: {
-        DB.updateExercise(name.text, info.text, type.value, page.table);
+        DB.updateExercise(name.text, info.text, type.value, eid);
         pageStack.find( function(p) {
             try { p.refresh(); } catch (e) {};
             return false;

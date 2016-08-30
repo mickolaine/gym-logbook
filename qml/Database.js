@@ -1,8 +1,26 @@
 .pragma library
 .import QtQuick.LocalStorage 2.0 as LS
 
-
 function open() {
+    try {
+        var db = LS.LocalStorage.openDatabaseSync("gym-logbook", "", "Gym Logbook database", 1000000);
+
+        if (db.version === "") {
+            db.changeVersion("", "5",
+                function(tx) {
+                    tx.executeSql("CREATE TABLE IF NOT EXISTS exercisenames(id INTEGER UNIQUE, name TEXT, additional TEXT, type TEXT, popularity INTEGER, priority INTEGER);");
+                    tx.executeSql("CREATE TABLE IF NOT EXISTS exercisedata(id INTEGER UNIQUE, exercise_id INTEGER, date DATE, sets INTEGER, reps INTEGER, seconds REAL, weight REAL, status INTEGER);");
+                    tx.executeSql("CREATE TABLE IF NOT EXISTS workouts(id INTEGER UNIQUE, name TEXT, additional TEXT, dbname TEXT);");
+                }
+            );
+        }
+    } catch(e) {
+        console.log("Could not open DB: " + e);
+    }
+    return db;
+}
+
+function open_4() {
   try {
     var db = LS.LocalStorage.openDatabaseSync("gym-logbook", "", "Gym Logbook database", 1000000);
 
@@ -15,7 +33,7 @@ function open() {
       );
     }
   } catch (e) {
-    //console.log("Could not open DB: " + e);
+    console.log("Could not open DB: " + e);
   }
   return db;
 }
@@ -62,6 +80,70 @@ function updateDB() {
                         var r = res.rows.item(i);
                         tx.executeSql("UPDATE workouts SET dbname = 'w_" + r.dbname + "' WHERE dbname = '" + r.dbname + "';");
                         tx.executeSql("ALTER TABLE " + r.dbname + " RENAME TO w_" + r.dbname + ";");
+                    }
+                }
+            );
+        }
+        if (db.version === "4") {
+            db.changeVersion("4", "5",
+                function(tx) {
+                    try {
+                        tx.executeSql("CREATE TABLE IF NOT EXISTS exercisenames(id INTEGER UNIQUE, name TEXT, additional TEXT, type TEXT, popularity INTEGER, priority INTEGER);");
+                        tx.executeSql("CREATE TABLE IF NOT EXISTS exercisedata(id INTEGER UNIQUE, exercise_id INTEGER, date DATE, sets INTEGER, reps INTEGER, seconds REAL, weight REAL, status INTEGER);");
+                    }
+                    catch(e) {print(e);}
+
+                    try {
+                        var result = tx.executeSql("SELECT max(id) FROM exercisenames;");
+                        var newEID = result.rows.item(0)["max(id)"] + 1;
+                    }
+                    catch(e) {
+
+                        var newEID = 0;
+                    }
+                    print(newEID);
+                    try {
+                        var result = tx.executeSql("SELECT max(priority) FROM exercisenames;");
+                        var priority = result.rows.item(0)["max(priority)"] + 1;
+                    }
+                    catch(e) {
+                        var priority = 0;
+                    }
+
+                    var res = tx.executeSql("SELECT * from exercises;");
+                    print(JSON.stringify(res));
+
+                    for ( var i = 0; i < res.rows.length; i++ ) {
+                        var r = res.rows.item(i);
+                        print(JSON.stringify(r));
+                        try {
+                            print(newEID + ", " + r.name + ", " + r.additional + "," + r.type + ", " + priority);
+                            tx.executeSql("INSERT INTO exercisenames VALUES(?,?,?,?,?,?);", [newEID, r.name, r.additional, r.type, 0, priority]);
+
+                        }
+                        catch(e) { print(e);}
+                        try {
+                        result = tx.executeSql("SELECT * from " + r.dbname + ";");
+                        }
+                        catch(e) { print(e);}
+
+                        try {
+                            var sres = tx.executeSql("SELECT max(id) FROM exercisedata;");
+                            print(JSON.stringify(sres));
+                            var newSID = sres.rows.item(0)["max(id)"] + 1;
+                        }
+                        catch(e) { var newSID = 0; }
+
+                        for ( var j = 0; j < result.rows.length; j++ ) {
+
+                            var re = result.rows.item(j);
+                            var date = new Date(re.year, re.month-1, re.day, 0, 0, 0);
+                            print(newSID + ", " + newEID + ", " + date + ", " + re.sets + ", " + re.reps + ", " + re.seconds + ", " + re.weight + ", " + re.status);
+                            tx.executeSql("INSERT INTO exercisedata VALUES(?,?,?,?,?,?,?,?);", [newSID, newEID, date, re.sets, re.reps, re.seconds, re.weight, re.status]);
+
+                            newSID = newSID + 1;
+                        }
+                        newEID = newEID + 1;
                     }
                 }
             );
@@ -299,7 +381,47 @@ function newExercise(name, additional, type, tablename) {
     );
 }
 
-function updateExercise(name, additional, type, tablename) {
+function updateExercise(name, additional, type, eid) {
+    // If tablename is set, this updates the table in question. Otherwise creates a new one.
+    withDB(
+        function(tx) {
+            if (eid) {
+                tx.executeSql("UPDATE exercisenames SET name = '" + name +
+                                                    "', additional = '" + additional +
+                                                    "', type = '" + type +
+                                             "' WHERE id = '" + eid + "';");
+                return;
+            }
+
+            try {
+                var result = tx.executeSql("SELECT max(id) FROM exercisenames;");
+                //print(result.rows.item(0)["max(id)"]);
+                var newId = result.rows.item(0)["max(id)"];
+            }
+            catch(e) {
+                var newId = 0;
+            }
+            try {
+                var result = tx.executeSql("SELECT max(priority) FROM exercisenames;");
+                var priority = result.rows.item(0)["max(priority)"] + 1;
+            }
+            catch(e) {
+                var priority = 0;
+            }
+
+            var newId = newId + 1;
+            try {
+                tx.executeSql("INSERT INTO exercisenames VALUES(?, ?, ?, ?, ?, ?);", [newId, name, additional, type, 0, priority]);
+            }
+            catch(e) {
+                console.log(e);
+            }
+        }
+    );
+}
+
+
+function updateExercise_old(name, additional, type, tablename) {
     // If tablename is set, this updates the table in question. Otherwise creates a new one.
     withDB(
         function(tx) {
@@ -330,7 +452,43 @@ function updateExercise(name, additional, type, tablename) {
     );
 }
 
-function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
+// Version 5
+function newSet(eid, date, sets, reps, weight, seconds, status) {
+    withDB(
+        function(tx) {
+            try {
+                var result = tx.executeSql("SELECT max(id) FROM exercisedata;");
+                var maxId = result.rows.item(0)["max(id)"];
+
+            }
+            catch(e) {
+                var maxId = 0;
+            }
+
+            try {
+                var result = tx.executeSql("SELECT max(popularity) FROM exercisedata;");
+                var popularity = result.rows.item(0)["max(popularity)"] + 1;
+            }
+            catch(e) {
+                var popularity = 1;
+            }
+
+            var newId = maxId + 1;
+            try {
+                tx.executeSql("INSERT INTO exercisedata VALUES(" + newId + ", " + eid + ", '" + date + "', " + sets + ", " + reps + ", '"
+                                                 + seconds.replace(",", ".") + "', '" + weight.replace(",", ".") + "', '" + status + "');");
+                tx.executeSql("UPDATE exercisenames SET popularity = " + popularity + " WHERE id = " + eid + ";");
+            }
+            catch(e) {
+                console.log(e);
+            }
+        }
+    )
+
+}
+
+// Version 4
+function newSet_old(table, year, month, day, sets, reps, weight, seconds, status) {
     withDB(
         function(tx) {
             try {
@@ -343,8 +501,7 @@ function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
 
             var newId = maxId + 1;
             try {
-                console.log("INSERT INTO "+ table + " VALUES(" + newId + ", " + year + ", " + month + ", " + day +
-                        ", " + sets + ", " + reps + ", '" + seconds.replace(",", ".") + "', '" + weight.replace(",", ".") + "', '" + status + "');");
+
                 tx.executeSql("INSERT INTO "+ table + " VALUES(" + newId + ", " + year + ", " + month + ", " + day +
                           ", " + sets + ", " + reps + ", '" + seconds.replace(",", ".") + "', '" + weight.replace(",", ".") + "', '" + status + "');");
             }
@@ -356,12 +513,12 @@ function newSet(table, year, month, day, sets, reps, weight, seconds, status) {
 
 }
 
-function updateSet(id, table, year, month, day, sets, reps, weight, seconds, status) {
+// Version 5
+function updateSet(sid, date, sets, reps, weight, seconds, status) {
     withDB(
         function(tx) {
-            tx.executeSql("UPDATE "+ table + " SET year=" + year + ", month=" + month + ", day=" + day +
-                          ", sets=" + sets + ", reps=" + reps + ", seconds='" + seconds.replace(",", ".") + "', weight='" + weight.replace(",", ".") +
-                          "', status='" + status + "' WHERE id=" + id +";");
+            tx.executeSql("UPDATE exercisedata SET date=" + date + ", sets=" + sets + ", reps=" + reps +
+                          ", seconds='" + seconds.replace(",", ".") + "', weight='" + weight.replace(",", ".") + "', status='" + status + "' WHERE sid=" + sid +";");
         }
     )
 }
@@ -374,26 +531,26 @@ function hasExercise(name) {
      )
 }
 
-function getExercises(list) {
+function getExercises(list, order) {
     withDB(
         function(tx) {
-            var res = tx.executeSql("select * from exercises order by id;");
+            var res = tx.executeSql("select * from exercisenames order by " + order + " DESC;");
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
-                list.append({"id": r.id, "name": r.name, "info": r.additional, "dbname": r.dbname});
+                list.append({"id": r.id, "name": r.name, "info": r.additional, "popularity": r.popularity, "priority": r.priority});
             }
         }
     )
 }
 
-/*function getExerciseInfo(name, id, info){
-    withDB(
+function getExerciseByEID(eid) {
+    return withDB(
         function(tx) {
-            var res = tx.executeSql("SELECT name, additional, type FROM exercises where id = ?;",[id]);
-            info = [res.rows.item(0).name, res.rows.item(0).additional, res.rows.item(0).type];
+            var res = tx.executeSql("SELECT id, name, additional, type, popularity, priority FROM exercisenames where id =?;",[eid]);
+            return res.rows.item(0);
         }
     )
-}*/
+}
 
 function getExerciseByTable(table){
     return withDB(
@@ -404,9 +561,55 @@ function getExerciseByTable(table){
     )
 }
 
-function getExercise(list, tablename) {
+// Version 5
+function getExerciseData(list, eid, future) {
     withDB(
         function(tx) {
+
+            if (!future){
+                var myDate = new Date();
+                var year = myDate.getFullYear();
+                var month = myDate.getMonth();
+                var day = myDate.getDate();
+            }
+
+            var res;
+            if (future) {
+                res = tx.executeSql("SELECT N.id as eid, D.id as sid, date, sets, reps, seconds, weight, status FROM exercisedata AS D JOIN exercisenames AS N WHERE D.exercise_id = N.id AND exercise_id = " + eid + " ORDER BY date DESC;");
+            }
+            else {
+                res = tx.executeSql("SELECT * FROM exercisedata " +
+                                    " WHERE year < " + year +
+                                      " or (year == " + year + " and month < " + (month + 1) + ")" +
+                                      " or (year == " + year + " and month ==" + (month + 1) + " and day <= " + day + ")" +
+                                      " ORDER BY year DESC, month DESC, day DESC, id DESC;");
+            }
+
+            for ( var i = 0; i < res.rows.length; i++ ) {
+
+                var r = res.rows.item(i);
+                //print(JSON.stringify(r));
+
+                list.append({"id":r.sid, "eid":r.eid, "date": r.date, "sets":r.sets, "reps":r.reps, "seconds":parseFloat(r.seconds), "weight":parseFloat(r.weight), "status":r.status});
+
+            }
+
+        }
+    )
+}
+
+
+function getExercise(list, tablename, future) {
+    withDB(
+        function(tx) {
+
+            if (!future){
+                var myDate = new Date();
+                var year = myDate.getFullYear();
+                var month = myDate.getMonth();
+                var day = myDate.getDate();
+            }
+
             var weight;
             if (getExerciseType(tablename) === "Weight") {
                 weight = true;
@@ -415,7 +618,18 @@ function getExercise(list, tablename) {
                 weight = false;
             }
 
-            var res = tx.executeSql("SELECT * FROM " + tablename + " ORDER BY year DESC, month DESC, day DESC;");
+            var res;
+            if (future) {
+                res = tx.executeSql("SELECT * FROM " + tablename + " ORDER BY year DESC, month DESC, day DESC, id DESC;");
+            }
+            else {
+                res = tx.executeSql("SELECT * FROM " + tablename +
+                                    " WHERE year < " + year +
+                                      " or (year == " + year + " and month < " + (month + 1) + ")" +
+                                      " or (year == " + year + " and month ==" + (month + 1) + " and day <= " + day + ")" +
+                                      " ORDER BY year DESC, month DESC, day DESC, id DESC;");
+            }
+
             for ( var i = 0; i < res.rows.length; i++ ) {
                 var r = res.rows.item(i);
 
@@ -433,17 +647,56 @@ function getExercise(list, tablename) {
     )
 }
 
-function getSet(table, id) {
+function getSetData(sid) {
     return withDB(
         function(tx) {
-            var res = tx.executeSql("SELECT * FROM " + table + " WHERE id = " + id + ";");
-            return [res.rows.item(0).year, res.rows.item(0).month, res.rows.item(0).day, res.rows.item(0).sets,
-                    res.rows.item(0).reps, res.rows.item(0).seconds, res.rows.item(0).weight, res.rows.item(0).status];
+            var res = tx.executeSql("SELECT * FROM exercisedata WHERE id = " + sid + ";");
+            return res.rows.item(0);
         }
-    )
+    );
 }
 
-function get1RMSet(table, alltime) {
+function getSet(sid) {
+    return withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT * FROM exercisedata WHERE id = " + sid + ";");
+            return [res.rows.item(0).date, res.rows.item(0).sets, res.rows.item(0).reps, res.rows.item(0).seconds, res.rows.item(0).weight, res.rows.item(0).status];
+        }
+    );
+}
+
+function deleteSet(table, id) {
+    withDB(
+        function(tx) {
+            tx.executeSql("DELETE FROM " + table + " WHERE id = " + id + ";");
+        }
+    );
+}
+
+// Version 5
+function get1RMSet(eid, alltime) {
+    return withDB(
+        function(tx) {
+            var rm = 0;
+            var rmnew = 0;
+
+            var res = tx.executeSql("SELECT * FROM exercisedata WHERE exercise_id = " + eid + " AND status = 'Done' ORDER BY date DESC;");
+
+            for ( var i = 0; i < res.rows.length; i++ ) {
+                var r = res.rows.item(i);
+                rmnew = r.weight * (36/(37-r.reps));
+
+                if (rmnew > rm) {
+                    rm = rmnew;
+                }
+            }
+            return rm.toFixed(1);
+        }
+    );
+}
+
+// Version 4
+function get1RMSet_old(table, alltime) {
     return withDB(
         function(tx) {
             var rm = 0;
@@ -482,7 +735,16 @@ function get1RMSet(table, alltime) {
     );
 }
 
-function getExerciseType(dbname) {
+function getExerciseType(eid) {
+    return withDB(
+        function(tx) {
+            var res = tx.executeSql("SELECT type FROM exercisenames where id = ?;", [eid]);
+            return res.rows.item(0).type;
+        }
+    )
+}
+
+function getExerciseType_old(dbname) {
     return withDB(
         function(tx) {
             var res = tx.executeSql("SELECT type FROM exercises where dbname = ?;", [dbname]);
@@ -491,11 +753,11 @@ function getExerciseType(dbname) {
     )
 }
 
-function changeStatus(table, id, status) {
+function changeStatus(sid, status) {
     withDB(
         function(tx) {
             try {
-                tx.executeSql("UPDATE " + table + " SET status = '" + status + "' WHERE id = " + id + ";");
+                tx.executeSql("UPDATE exercisedata SET status = '" + status + "' WHERE id = " + sid + ";");
             }
             catch(e) {
                 //console.log(e);
